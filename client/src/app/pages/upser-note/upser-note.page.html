@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>upser-note</ion-title>
+    <ion-buttons slot="end">
+        <ion-button (click)="close()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="onSubmit()" >
+    <ion-item>
+        <ion-label>Title</ion-label>
+        <ion-input type="text" name="title" [(ngModel)]="note.title"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label>Text</ion-label>
+        <ion-input type="text" name="text" [(ngModel)]="note.text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Done</ion-label>
+      <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
+    </ion-item>
+    <ion-button color="primary" expand="full" type="submit">Save</ion-button>
+  </form>
+</ion-content>
