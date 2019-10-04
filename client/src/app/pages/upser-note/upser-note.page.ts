@@ -10,7 +10,7 @@ import { Note } from 'src/app/models/note.model';
 })
 export class UpserNotePage implements OnInit {
 
-  @Input() note: Note;
+  note: Note;
 
   constructor(public modalController: ModalController, private nestMongoService: NestMongoService) { }
 
