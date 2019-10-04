@@ -21,6 +21,22 @@
       <ion-label>Done</ion-label>
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
+    <ion-item>
+      <ion-button color="tertiary" (click)="addPhoto()">
+        <ion-icon slot="start" name="image"></ion-icon>
+        Library
+      </ion-button>
+      <ion-button color="secondary" (click)="addPhoto('camera')">
+        <ion-icon slot="start" name="camera"></ion-icon>
+        Camera
+      </ion-button>
+    </ion-item>
+
+      <ion-slides [options]="sliderConfig">
+        <ion-slide *ngFor="let photo of note.image">
+          <ion-img src="{{photo}}"></ion-img>
+        </ion-slide>
+      </ion-slides>
     <ion-button color="primary" expand="full" type="submit">Save</ion-button>
   </form>
 </ion-content>

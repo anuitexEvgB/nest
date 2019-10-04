@@ -12,5 +12,8 @@ export class Note {
     text: string;
 
     @Column()
+    image: any;
+
+    @Column()
     completed: boolean;
 }
