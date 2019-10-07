@@ -1,8 +1,12 @@
+import { WebView } from '@ionic-native/ionic-webview/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+
 
 @Component({
   selector: 'app-upser-note',
@@ -14,11 +18,19 @@ export class UpserNotePage implements OnInit {
   note: Note;
   sliderConfig: {};
 
-  constructor(public modalController: ModalController, private camera: Camera, private file: File) {
+  constructor(
+    public modalController: ModalController,
+    private camera: Camera,
+    private file: File,
+    private filePath: FilePath,
+    private geolocation: Geolocation,
+    private webView: WebView
+    ) {
     this.sliderConfig = {
-      slidesPerView: 1.6,
-      spaceBetween: 10,
+      initialSlide: 1,
+      speed: 400,
       centeredSlides: true,
+      slideShadows: true,
     };
    }
 
@@ -54,8 +66,8 @@ export class UpserNotePage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
-    }
-    this.camera.getPicture().then((imageData) => {
+    };
+    await this.camera.getPicture(options).then((imageData) => {
       const filename = imageData.substring(imageData.lastIndexOf('/') + 1);
       const path = imageData.substring(0, imageData.lastIndexOf('/') + 1);
       this.file.readAsDataURL(path, filename).then((base64data) => {
@@ -64,29 +76,21 @@ export class UpserNotePage implements OnInit {
     });
   }
 
-  async openCamera() {
-    const options: CameraOptions = {
-      quality: 100,
-      destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE,
-      targetHeight: 1000,
-      targetWidth: 1000,
-      sourceType: this.camera.PictureSourceType.CAMERA
-    };
-    return await this.camera.getPicture(options);
-  }
-
   async openLibrary() {
     const options: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.FILE_URI,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE,
-      targetHeight: 1000,
-      targetWidth: 1000,
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      saveToPhotoAlbum: false
     };
-    return await this.camera.getPicture(options);
+    await this.camera.getPicture(options).then((imageData) => {
+      this.filePath.resolveNativePath(imageData)
+      .then((filePath) => {
+        const a = this.webView.convertFileSrc(filePath);
+        console.log(a);
+        this.note.image.push(a);
+      })
+      .catch(err => console.log(err, 'upload library camera'));
+    });
   }
 }
