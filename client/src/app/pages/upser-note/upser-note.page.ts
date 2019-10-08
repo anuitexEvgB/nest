@@ -2,7 +2,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { File } from '@ionic-native/file/ngx';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
@@ -15,8 +15,9 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 })
 export class UpserNotePage implements OnInit {
 
-  note: Note;
+  @Input() note: Note;
   sliderConfig: {};
+  checked: false;
 
   constructor(
     public modalController: ModalController,
@@ -27,14 +28,17 @@ export class UpserNotePage implements OnInit {
     private webView: WebView
     ) {
     this.sliderConfig = {
-      initialSlide: 1,
-      speed: 400,
+      width: 200,
+      height: 200,
+      cssMode: true,
+      nested: true,
+      roundLengths: true,
       centeredSlides: true,
-      slideShadows: true,
+      spaceBetween: 20,
+      slidesPerView: 1.5,
     };
    }
 
-  checked: false;
   ngOnInit() {
 
     if (!this.note) {
@@ -46,6 +50,7 @@ export class UpserNotePage implements OnInit {
       };
     }
   }
+
   close() {
     this.modalController.dismiss();
   }

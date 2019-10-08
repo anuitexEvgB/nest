@@ -21,22 +21,30 @@
       <ion-label>Done</ion-label>
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
-    <ion-item>
-      <ion-button color="tertiary" (click)="openLibrary()">
-        <ion-icon slot="start" name="image"></ion-icon>
-        Library
-      </ion-button>
-      <ion-button color="secondary" (click)="addPhoto()">
-        <ion-icon slot="start" name="camera"></ion-icon>
-        Camera
-      </ion-button>
-    </ion-item>
 
-      <ion-slides [options]="sliderConfig">
+    <ion-button size="large" expand="full" color="dark">
+      <ion-icon name="md-pin" name="ios-pin"></ion-icon>
+      Add Geo
+    </ion-button>
+
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button color="tertiary" (click)="openLibrary()">
+          <ion-icon slot="start" name="image"></ion-icon>
+          Library
+        </ion-button>
+        <ion-button color="secondary" (click)="addPhoto()">
+          <ion-icon slot="start" name="camera"></ion-icon>
+          Camera
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+      <ion-slides [options]="sliderConfig" loop="true" effect="coverflow">
         <ion-slide *ngFor="let photo of note.image">
-          <ion-img #waterMarkedImage [src]="photo"></ion-img>
+          <ion-img [src]="photo"></ion-img>
         </ion-slide>
       </ion-slides>
-    <ion-button color="primary" expand="full" type="submit">Save</ion-button>
+    <ion-button class="button-submit" size="large" color="success" expand="full" type="submit">Save</ion-button>
   </form>
 </ion-content>
