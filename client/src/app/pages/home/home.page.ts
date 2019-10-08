@@ -11,7 +11,10 @@ import { NestMongoService } from 'src/app/services/nest-mongo.service';
 })
 export class HomePage implements OnInit {
   notes: Note[];
-  constructor(public modalController: ModalController, private nestMongoService: NestMongoService) {}
+  constructor(
+    public modalController: ModalController,
+    private nestMongoService: NestMongoService,
+    ) {}
 
   ngOnInit() {
     this.getAll();

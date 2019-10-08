@@ -1,11 +1,11 @@
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -24,8 +24,8 @@ export class UpserNotePage implements OnInit {
     private camera: Camera,
     private file: File,
     private filePath: FilePath,
-    private geolocation: Geolocation,
-    private webView: WebView
+    private webView: WebView,
+    private router: Router,
     ) {
     this.sliderConfig = {
       width: 200,
@@ -97,5 +97,9 @@ export class UpserNotePage implements OnInit {
       })
       .catch(err => console.log(err, 'upload library camera'));
     });
+  }
+
+  navigateToGeo() {
+    this.router.navigate(['/', 'geolocation']);
   }
 }

@@ -2,7 +2,6 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Component } from '@angular/core';
-import { NativeGeocoder, NativeGeocoderOptions, NativeGeocoderReverseResult } from '@ionic-native/native-geocoder/ngx';
 
 @Component({
   selector: 'app-geolocation',
@@ -28,8 +27,6 @@ export class GeolocationPage {
     this.timetest = Date.now();
   }
 
-  ngOnInit() {
-  }
   checkGPSPermission() {
     this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_COARSE_LOCATION).then(
       result => {

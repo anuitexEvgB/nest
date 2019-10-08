@@ -1,5 +1,4 @@
 import { FormsModule } from '@angular/forms';
-import { UpserNotePage } from './pages/upser-note/upser-note.page';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -22,9 +21,10 @@ import { FilePath } from '@ionic-native/file-path/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NestMongoService } from './services/nest-mongo.service';
+import { UpserNotePage } from './pages/upser-note/upser-note.page';
 
 @NgModule({
-  declarations: [AppComponent, UpserNotePage],
+  declarations: [AppComponent, UpserNotePage ],
   entryComponents: [UpserNotePage],
   imports: [FormsModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
   providers: [

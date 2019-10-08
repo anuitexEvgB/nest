@@ -22,7 +22,7 @@
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
 
-    <ion-button  href="/geolocation" size="large" expand="full" color="dark">
+    <ion-button  (click)="navigateToGeo()" size="large" expand="full" color="dark">
       <ion-icon name="md-pin" name="ios-pin"></ion-icon>
       Add Geo
     </ion-button>
