@@ -5,6 +5,7 @@ import { NoteService } from './note/note.service';
 import { NoteController } from './note/note.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Note } from './models/note.model';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -17,6 +18,9 @@ import { Note } from './models/note.model';
       useUnifiedTopology: true,
     }),
     TypeOrmModule.forFeature([Note]),
+    MulterModule.register({
+      dest: 'uploads/',
+    }),
   ],
   controllers: [AppController, NoteController],
   providers: [AppService, NoteService],

@@ -8,5 +8,6 @@
         <domain includeSubdomains="true">10.10.1.133:3000/note</domain>
         <domain includeSubdomains="true">10.10.1.133:3000</domain>
         <domain includeSubdomains="true">10.10.1.133</domain>
+        <domain includeSubdomains="true">http://10.10.1.133:3000/note/upload</domain>
     </domain-config>
 </network-security-config>

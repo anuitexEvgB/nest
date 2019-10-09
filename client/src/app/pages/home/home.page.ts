@@ -1,3 +1,5 @@
+import { UploadImgNestService } from './../../services/upload-img-nest.service';
+import { Router } from '@angular/router';
 import { UpserNotePage } from './../upser-note/upser-note.page';
 import { Component, OnInit } from '@angular/core';
 import { IonItemSliding, ModalController } from '@ionic/angular';
@@ -14,6 +16,7 @@ export class HomePage implements OnInit {
   constructor(
     public modalController: ModalController,
     private nestMongoService: NestMongoService,
+    private router: Router,
     ) {}
 
   ngOnInit() {
@@ -78,6 +81,10 @@ export class HomePage implements OnInit {
         });
       }
     }
+  }
+
+  geoPage() {
+    this.router.navigate(['/', 'geolocation']);
   }
 
   autoClose(slidingItem: IonItemSliding) {

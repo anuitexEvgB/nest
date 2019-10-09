@@ -1,11 +1,10 @@
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-import { File } from '@ionic-native/file/ngx';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { Router } from '@angular/router';
+import { UploadImgNestService } from './../../services/upload-img-nest.service';
 
 
 @Component({
@@ -19,13 +18,13 @@ export class UpserNotePage implements OnInit {
   sliderConfig: {};
   checked: false;
 
+
   constructor(
     public modalController: ModalController,
     private camera: Camera,
-    private file: File,
     private filePath: FilePath,
     private webView: WebView,
-    private router: Router,
+    private uploadImgNestService: UploadImgNestService,
     ) {
     this.sliderConfig = {
       width: 200,
@@ -51,6 +50,7 @@ export class UpserNotePage implements OnInit {
     }
   }
 
+
   close() {
     this.modalController.dismiss();
   }
@@ -64,6 +64,10 @@ export class UpserNotePage implements OnInit {
     this.note.completed = event.detail.checked;
     this.checked = event.detail.checked;
   }
+  uploadFile(files: FileList) {
+    console.log(files);
+    this.uploadImgNestService.uploadFile(files).subscribe();
+  }
 
   async addPhoto() {
     const options: CameraOptions = {
@@ -73,11 +77,12 @@ export class UpserNotePage implements OnInit {
       encodingType: this.camera.EncodingType.JPEG,
     };
     await this.camera.getPicture(options).then((imageData) => {
-      const filename = imageData.substring(imageData.lastIndexOf('/') + 1);
-      const path = imageData.substring(0, imageData.lastIndexOf('/') + 1);
-      this.file.readAsDataURL(path, filename).then((base64data) => {
-        this.note.image.push(base64data);
-      });
+      this.filePath.resolveNativePath(imageData)
+      .then((filePath) => {
+        const webTransfor = this.webView.convertFileSrc(filePath);
+        this.note.image.push(webTransfor);
+      })
+      .catch(err => console.log(err, 'upload library camera'));
     });
   }
 
@@ -91,15 +96,13 @@ export class UpserNotePage implements OnInit {
     await this.camera.getPicture(options).then((imageData) => {
       this.filePath.resolveNativePath(imageData)
       .then((filePath) => {
-        const a = this.webView.convertFileSrc(filePath);
-        console.log(a);
-        this.note.image.push(a);
+        const webTransfor = this.webView.convertFileSrc(filePath);
+        this.note.image.push(webTransfor);
       })
       .catch(err => console.log(err, 'upload library camera'));
     });
   }
 
   navigateToGeo() {
-    this.router.navigate(['/', 'geolocation']);
   }
 }

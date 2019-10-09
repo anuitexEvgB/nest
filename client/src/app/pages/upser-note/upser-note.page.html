@@ -40,6 +40,8 @@
       </ion-buttons>
     </ion-toolbar>
 
+    <input type="file"  (change)="uploadFile($event.target.files)">
+
       <ion-slides [options]="sliderConfig" loop="true" effect="coverflow">
         <ion-slide *ngFor="let photo of note.image">
           <ion-img [src]="photo"></ion-img>

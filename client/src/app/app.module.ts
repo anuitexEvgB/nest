@@ -22,12 +22,14 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NestMongoService } from './services/nest-mongo.service';
 import { UpserNotePage } from './pages/upser-note/upser-note.page';
+import { UploadImgNestService } from './services/upload-img-nest.service';
 
 @NgModule({
   declarations: [AppComponent, UpserNotePage ],
   entryComponents: [UpserNotePage],
   imports: [FormsModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
   providers: [
+    UploadImgNestService,
     NestMongoService,
     StatusBar,
     SplashScreen,
