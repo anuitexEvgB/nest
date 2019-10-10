@@ -41,6 +41,7 @@
     "cordova-plugin-nativegeocoder": "^3.2.2",
     "cordova-plugin-request-location-accuracy": "^2.3.0",
     "core-js": "^2.5.4",
+    "ionic-image-loader": "^6.3.3",
     "ionic-img-viewer": "^2.9.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",

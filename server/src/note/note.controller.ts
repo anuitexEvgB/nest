@@ -1,3 +1,4 @@
+import { PhotoService } from './photo/photo.service';
 import { NoteDto } from './../DTO/note.dto';
 import { ObjectID } from 'typeorm';
 import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
@@ -9,34 +10,29 @@ import { MulterOptions } from 'src/LoadConfg/multer-config';
 @Controller('note')
 export class NoteController {
 
-    constructor(private noteService: NoteService) { }
+    constructor(
+        private noteService: NoteService,
+        private photoService: PhotoService,
+    ) { }
 
     @Get()
     async getNotes() {
         return await this.noteService.getNotes();
     }
 
-    @Get()
-    async getUsersFotList() {
-        return await this.noteService.getNotes();
-    }
-    @Get(':id')
-    async getNote(@Param('id') id: ObjectID) {
-        return await this.noteService.getNote(id);
-    }
-
-    @Post('upload')
-    @UseInterceptors(AnyFilesInterceptor(MulterOptions))
-    uploadFile(@UploadedFiles() files) {
-        // tslint:disable-next-line: no-console
-        console.log('test');
-        // tslint:disable-next-line: no-console
-        console.log(files);
-    }
-
     @Post()
     async create(@Body() note: NoteDto) {
         return await this.noteService.addNote(note);
+    }
+
+    @Get('getPhotos')
+    async getPhotos() {
+        return await this.photoService.getPhotoToNote();
+    }
+
+    @Get(':id')
+    async getNote(@Param('id') id: ObjectID) {
+        return await this.noteService.getNote(id);
     }
 
     @Put(':id')
@@ -48,4 +44,11 @@ export class NoteController {
     async delete(@Param('id') id: ObjectID) {
         return await this.noteService.deleteNoteId(id);
     }
+    @Post('upload/:id')
+    @UseInterceptors(AnyFilesInterceptor(MulterOptions))
+    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID) {
+        return await this.photoService.addPhotoToNote(id, photo);
+    }
+
+
 }

@@ -6,6 +6,8 @@ import { NoteController } from './note/note.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Note } from './models/note.model';
 import { MulterModule } from '@nestjs/platform-express';
+import { PhotoService } from './note/photo/photo.service';
+import { Photo } from './models/photo.model';
 
 @Module({
   imports: [
@@ -17,12 +19,12 @@ import { MulterModule } from '@nestjs/platform-express';
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
-    TypeOrmModule.forFeature([Note]),
+    TypeOrmModule.forFeature([Note, Photo]),
     MulterModule.register({
       dest: 'uploads/',
     }),
   ],
   controllers: [AppController, NoteController],
-  providers: [AppService, NoteService],
+  providers: [AppService, NoteService, PhotoService],
 })
 export class AppModule {}
