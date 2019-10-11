@@ -22,12 +22,12 @@
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
 
-    <ion-button  (click)="navigateToGeo()" size="large" expand="full" color="dark">
+    <!-- <ion-button  (click)="navigateToGeo()" size="large" expand="full" color="dark">
       <ion-icon name="md-pin" name="ios-pin"></ion-icon>
       Add Geo
-    </ion-button>
+    </ion-button> -->
 
-    <ion-toolbar>
+    <!-- <ion-toolbar>
       <ion-buttons slot="start">
         <ion-button color="tertiary" style="width:20%" (click)="openLibrary()">
           <ion-icon slot="start" name="image"></ion-icon>
@@ -38,15 +38,54 @@
           Camera
         </ion-button>
       </ion-buttons>
-    </ion-toolbar>
+    </ion-toolbar> -->
 
     <input type="file"  (change)="uploadFile($event.target.files)">
 
-      <ion-slides [options]="sliderConfig" loop="true" effect="coverflow">
+      <!-- <ion-slides [options]="sliderConfig" loop="true" effect="coverflow">
         <ion-slide *ngFor="let photo of note.image">
           <ion-img [src]="photo"></ion-img>
         </ion-slide>
-      </ion-slides>
-    <ion-button class="button-submit" size="large" color="success" expand="full" type="submit">Save</ion-button>
+      </ion-slides> -->
+
+      <ion-list>
+          <ion-item *ngFor="let photo of photos">
+            <ion-thumbnail slot="start">
+              <ion-img [src]="photo"></ion-img>
+            </ion-thumbnail>
+            <ion-label>{{photo || "-"}}</ion-label>
+            <ion-button slot="end" fill="clear" (click)="deleteFile(photo)">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-button>
+          </ion-item>
+      </ion-list>
+
+
+      
+      <!--2variant-->
+      <!-- <h3 *ngIf="images.length === 0" text-center>Please select photo</h3>
+      <ion-list>
+        <ion-item *ngFor="let photo of images; index as pos">
+          <ion-thumbnail slot="start">
+            <ion-img [src]="photo.path"></ion-img>
+          </ion-thumbnail>
+          <ion-label>{{photo.name}}</ion-label>
+          <ion-button slot="end" fill="clear" (click)="startUpload(photo)">
+            <ion-icon slot="icon-only" name="cloud-upload"></ion-icon>
+          </ion-button>
+          <ion-button slot="end" fill="clear" (click)="deleteImg(photo)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+            </ion-button>
+        </ion-item>
+      </ion-list>
+      <ion-footer>
+          <ion-toolbar color="primary">
+            <ion-button fill="clear" expand="full" color="light" (click)="selectPhoto()">
+              <ion-icon name="camera" slot="start"></ion-icon>
+              Select Photo
+            </ion-button>
+          </ion-toolbar>
+        </ion-footer> -->
+        <ion-button class="button-submit" size="large" color="success" expand="full" type="submit">Save</ion-button>
   </form>
 </ion-content>

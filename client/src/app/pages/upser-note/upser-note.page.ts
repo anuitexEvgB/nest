@@ -16,8 +16,8 @@ import { UploadImgNestService } from './../../services/upload-img-nest.service';
 export class UpserNotePage implements OnInit {
 
   @Input() note: Note;
-  sliderConfig: {};
   checked: false;
+  photos = [];
 
 
   constructor(
@@ -28,25 +28,7 @@ export class UpserNotePage implements OnInit {
     private uploadImgNestService: UploadImgNestService,
     private file: File,
   ) {
-    this.uploadImgNestService.getPhoto()
-      .subscribe(res => {
-        res.forEach(element => {
-          if (element.noteId === this.note.id) {
-            const path = 'http://10.10.1.133:3000/uploads/' + element.photo;
-            this.note.image.push(path);
-          }
-        });
-      });
-    this.sliderConfig = {
-      width: 200,
-      height: 200,
-      cssMode: true,
-      nested: true,
-      roundLengths: true,
-      centeredSlides: true,
-      spaceBetween: 20,
-      slidesPerView: 1.5,
-    };
+    this.uploadPhoto();
   }
 
   ngOnInit() {
@@ -61,6 +43,17 @@ export class UpserNotePage implements OnInit {
     }
   }
 
+  uploadPhoto() {
+    this.uploadImgNestService.getPhoto()
+      .subscribe(res => {
+        res.forEach(element => {
+          if (element.noteId === this.note.id) {
+            const path = 'http://10.10.1.133:3000/uploads/' + element.photo;
+            this.photos.push(path);
+          }
+        });
+      });
+  }
 
   close() {
     this.modalController.dismiss();
@@ -76,8 +69,25 @@ export class UpserNotePage implements OnInit {
     this.checked = event.detail.checked;
   }
   uploadFile(files: FileList[]) {
-    console.log(files);
-    this.uploadImgNestService.uploadFile(files, this.note.id).subscribe();
+    this.uploadImgNestService.uploadFile(files, this.note.id).subscribe(res => {
+      const path = 'http://10.10.1.133:3000/uploads/' + res.photo;
+      this.photos.push(path);
+    });
+  }
+
+  deleteFile(photo) {
+    const index = this.photos.indexOf(photo);
+    if (index > -1) {
+      this.photos.splice(index, 1);
+    }
+    this.uploadImgNestService.getPhoto()
+    .subscribe(res => {
+      res.forEach(el => {
+        if (photo.indexOf(el.photo) > -1) {
+          this.uploadImgNestService.deletePhoto(el.id, el.photo).subscribe();
+      }
+      });
+    });
   }
 
   async addPhoto() {

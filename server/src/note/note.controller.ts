@@ -30,11 +30,6 @@ export class NoteController {
         return await this.photoService.getPhotoToNote();
     }
 
-    @Get(':id')
-    async getNote(@Param('id') id: ObjectID) {
-        return await this.noteService.getNote(id);
-    }
-
     @Put(':id')
     async update(@Param('id') id: ObjectID, @Body() note: Note) {
         return await this.noteService.updateNote(id, note);
@@ -44,11 +39,20 @@ export class NoteController {
     async delete(@Param('id') id: ObjectID) {
         return await this.noteService.deleteNoteId(id);
     }
+
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
     async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID) {
         return await this.photoService.addPhotoToNote(id, photo);
     }
 
+    @Get('getPhotos/:id')
+    async getPhoto(@Param('id') id: ObjectID) {
+        return await this.photoService.getPhotoToNoteById(id);
+    }
 
+    @Delete('getPhotos/:id')
+    async deletePhoto(@Param('id') id: ObjectID, @Body() namePhoto: any) {
+        return await this.photoService.deletePhoto(id, namePhoto);
+    }
 }

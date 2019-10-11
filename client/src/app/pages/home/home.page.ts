@@ -69,8 +69,7 @@ export class HomePage implements OnInit {
       for (let index = 0; index < this.notes.length; index++) {
         if (this.notes[index] === data) {
           this.notes[index] = data;
-          this.nestMongoService.postNotes(data).subscribe();
-          this.nestMongoService.deleteNoteId(data.id).subscribe();
+          this.nestMongoService.updateNote(data).subscribe(res => console.log(res));
           foundEdit = true;
           break;
         }

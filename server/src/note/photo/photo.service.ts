@@ -8,6 +8,7 @@ export class PhotoService {
     constructor(@InjectRepository(Photo) private noteRepository: Repository<Photo>) {}
 
     async addPhotoToNote(id: ObjectID, photo: Photo) {
+        console.log(photo);
         const photoToSave = {
             noteId: id,
             photo: photo[0].filename,
@@ -18,7 +19,19 @@ export class PhotoService {
 
     async getPhotoToNote(): Promise<Photo[]> {
         const res = await this.noteRepository.find();
-        console.log(res);
         return res;
+    }
+
+    async getPhotoToNoteById(id: ObjectID): Promise<Photo | undefined> {
+        return await this.noteRepository.findOne(id);
+    }
+
+    async deletePhoto(id: ObjectID, namePhoto: any[]) {
+        console.log(namePhoto);
+        return await this.noteRepository.delete(id);
+    }
+
+    async takeNamePhotoForDelete(namePhoto: any[]) {
+        console.log(namePhoto);
     }
 }

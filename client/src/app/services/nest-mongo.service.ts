@@ -28,4 +28,8 @@ export class NestMongoService {
   deleteNoteId(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.API_URL}/${id}`);
   }
+
+  updateNote(data: Note): Observable<Note> {
+    return this.httpClient.put<Note>(`${this.API_URL}/${data.id}`, data);
+  }
 }
