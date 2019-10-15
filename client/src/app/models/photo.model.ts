@@ -1,5 +1,5 @@
 export interface Photo {
-    id?: number;
+    _id?: string;
     noteId: number;
     photo: any[];
 }

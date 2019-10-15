@@ -3,7 +3,7 @@ import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
 @Entity()
 export class Photo {
     @ObjectIdColumn()
-    id: ObjectID;
+    _id: ObjectID;
 
     @Column()
     noteId: number;

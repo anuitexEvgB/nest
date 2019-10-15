@@ -43,6 +43,7 @@ export class NoteController {
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
     async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID) {
+        console.log(photo);
         return await this.photoService.addPhotoToNote(id, photo);
     }
 
@@ -51,8 +52,8 @@ export class NoteController {
         return await this.photoService.getPhotoToNoteById(id);
     }
 
-    @Delete('getPhotos/:id')
-    async deletePhoto(@Param('id') id: ObjectID, @Body() namePhoto: any) {
+    @Post('deletePhotos/:photoId')
+    async deletePhoto(@Param('photoId') id: string, @Body() namePhoto: any) {
         return await this.photoService.deletePhoto(id, namePhoto);
     }
 }

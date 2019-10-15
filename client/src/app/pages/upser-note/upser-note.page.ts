@@ -1,4 +1,3 @@
-import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Component, OnInit, Input } from '@angular/core';
@@ -26,7 +25,6 @@ export class UpserNotePage implements OnInit {
     private filePath: FilePath,
     private webView: WebView,
     private uploadImgNestService: UploadImgNestService,
-    private file: File,
   ) {
     this.uploadPhoto();
   }
@@ -69,6 +67,7 @@ export class UpserNotePage implements OnInit {
     this.checked = event.detail.checked;
   }
   uploadFile(files: FileList[]) {
+    console.log(files);
     this.uploadImgNestService.uploadFile(files, this.note.id).subscribe(res => {
       const path = 'http://10.10.1.133:3000/uploads/' + res.photo;
       this.photos.push(path);
@@ -84,7 +83,8 @@ export class UpserNotePage implements OnInit {
     .subscribe(res => {
       res.forEach(el => {
         if (photo.indexOf(el.photo) > -1) {
-          this.uploadImgNestService.deletePhoto(el.id, el.photo).subscribe();
+          debugger;
+          this.uploadImgNestService.deletePhoto(el._id, el.photo).subscribe();
       }
       });
     });
@@ -96,28 +96,55 @@ export class UpserNotePage implements OnInit {
       targetHeight: 200,
       targetWidth: 200,
       mediaType: this.camera.MediaType.PICTURE,
-      destinationType: this.camera.DestinationType.FILE_URI,
+      destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
     };
-    const capturedTempImage = await this.camera.getPicture(options);
-    console.log(capturedTempImage);
-    const savedImageFile = await this.savePicture(capturedTempImage);
-    console.log(savedImageFile);
-    this.note.image.unshift({
-      filepath: savedImageFile,
-      webviewPath: this.webView.convertFileSrc(savedImageFile)
+
+    await this.camera.getPicture(options).then(img => {
+      const blob = this.getBlob(img, 'image/jpeg');
+      console.log(blob);
+      debugger;
+      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(lol => console.log(lol));
+      debugger;
+      // this.filePath.resolveNativePath(img).then(filp => {
+      //   console.log(filp);
+      //   const webTr = this.webView.convertFileSrc(filp);
+      //   this.uploadImgNestService.uploadFile(webTr, this.note.id).subscribe(a => {console.log(a)});
+      //   console.log(webTr);
+      // });
+      // const files: File[] = [];
+      // console.log(img);
+      // let blob = this.getBlob(img, '.jpg');
+      // console.log(blob);
+      // debugger
+      // const file = new File([blob], 'image.jpg');
     });
+
+    
+    // await this.camera.getPicture(options).then((img) => {
+    //   window.resolveLocalFileSystemURI(img, (file => {
+    //     this.uploadImgNestService.uploadFile(file, this.note.id).subscribe();
+    //   }));
+    // });
+    // console.log(capturedTempImage);
+    // const savedImageFile = await this.savePicture(capturedTempImage);
+    // console.log(savedImageFile);
+    // console.log(this.webView.convertFileSrc(savedImageFile));
+    // this.note.image.unshift({
+    //   filepath: savedImageFile,
+    //   webviewPath: this.webView.convertFileSrc(savedImageFile)
+    // });
   }
-  async savePicture(cameraImage) {
-    const tempFilename = cameraImage.substr(cameraImage.lastIndexOf('/') + 1);
-    const tempBaseFilesystemPath = cameraImage.substr(0, cameraImage.lastIndexOf('/') + 1);
-    const newBaseFilesystemPath = this.file.dataDirectory;
-    await this.file.copyFile(tempBaseFilesystemPath, tempFilename, newBaseFilesystemPath, tempFilename);
-    console.log(tempFilename);
-    console.log(tempBaseFilesystemPath);
-    console.log(newBaseFilesystemPath);
-    return newBaseFilesystemPath + tempFilename;
-  }
+  // async savePicture(cameraImage) {
+  //   const tempFilename = cameraImage.substr(cameraImage.lastIndexOf('/') + 1);
+  //   const tempBaseFilesystemPath = cameraImage.substr(0, cameraImage.lastIndexOf('/') + 1);
+  //   const newBaseFilesystemPath = this.file.dataDirectory;
+  //   await this.file.copyFile(tempBaseFilesystemPath, tempFilename, newBaseFilesystemPath, tempFilename);
+  //   console.log(tempFilename);
+  //   console.log(tempBaseFilesystemPath);
+  //   console.log(newBaseFilesystemPath);
+  //   return newBaseFilesystemPath + tempFilename;
+  // }
 
   // const tempImage = await this.camera.getPicture(options);
   // console.log(tempImage);
@@ -158,12 +185,31 @@ export class UpserNotePage implements OnInit {
       this.filePath.resolveNativePath(imageData)
         .then((filePath) => {
           const webTransfor = this.webView.convertFileSrc(filePath);
-          this.note.image.push(webTransfor);
+          console.log(webTransfor);
         })
         .catch(err => console.log(err, 'upload library camera'));
     });
   }
 
-  navigateToGeo() {
-  }
+  private getBlob(b64Data:string, contentType:string, sliceSize:number= 512) {
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+    let byteCharacters = atob(b64Data);
+    let byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        let slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        let byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        let byteArray = new Uint8Array(byteNumbers);
+
+        byteArrays.push(byteArray);
+    }
+    let blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+}
 }
