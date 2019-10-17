@@ -12,7 +12,7 @@ export class Note {
     text: string;
 
     @Column()
-    image: any;
+    photos: any;
 
     @Column()
     completed: boolean;

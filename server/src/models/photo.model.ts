@@ -3,11 +3,12 @@ import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
 @Entity()
 export class Photo {
     @ObjectIdColumn()
-    _id: ObjectID;
+    // tslint:disable-next-line: variable-name
+    _id: string;
 
     @Column()
-    noteId: number;
+    noteId: string;
 
     @Column()
-    photo: string;
+    photo: any;
 }

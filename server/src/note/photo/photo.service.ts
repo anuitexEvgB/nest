@@ -9,7 +9,6 @@ export class PhotoService {
     constructor(@InjectRepository(Photo) private noteRepository: Repository<Photo>) {}
 
     async addPhotoToNote(id: ObjectID, photo: Photo) {
-        console.log(photo)
         const photoToSave = {
             noteId: id,
             photo: photo[0].filename,
@@ -27,12 +26,14 @@ export class PhotoService {
         return await this.noteRepository.findOne(id);
     }
 
-    async deletePhoto(id: string, namePhoto: any) {
+    async deletePhoto(id: string, namePhoto) {
         const name = namePhoto.namePhoto;
         const fs = require('fs');
         const file = 'uploads/';
+        // tslint:disable-next-line: only-arrow-functions
         fs.unlink(file + name, function(err) {
-            console.log(err, ' Eror unlinka');
+            // tslint:disable-next-line: no-console
+            console.error(err, ' Eror unlinka');
         });
         return await this.noteRepository.delete(id);
     }

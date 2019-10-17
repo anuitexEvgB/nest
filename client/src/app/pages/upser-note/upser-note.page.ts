@@ -1,10 +1,9 @@
-import { WebView } from '@ionic-native/ionic-webview/ngx';
-import { FilePath } from '@ionic-native/file-path/ngx';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { UploadImgNestService } from './../../services/upload-img-nest.service';
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 
 
 @Component({
@@ -13,7 +12,6 @@ import { UploadImgNestService } from './../../services/upload-img-nest.service';
   styleUrls: ['./upser-note.page.scss'],
 })
 export class UpserNotePage implements OnInit {
-
   @Input() note: Note;
   checked: false;
   photos = [];
@@ -22,23 +20,25 @@ export class UpserNotePage implements OnInit {
   constructor(
     public modalController: ModalController,
     private camera: Camera,
-    private filePath: FilePath,
-    private webView: WebView,
     private uploadImgNestService: UploadImgNestService,
+    private photoViewer: PhotoViewer,
   ) {
     this.uploadPhoto();
   }
 
   ngOnInit() {
-
     if (!this.note) {
       this.note = {
         title: '',
         text: '',
-        image: [],
+        photos: [],
         completed: false,
       };
     }
+  }
+
+  showPhoto(img: string) {
+    this.photoViewer.show(img, 'Photo');
   }
 
   uploadPhoto() {
@@ -47,7 +47,8 @@ export class UpserNotePage implements OnInit {
         res.forEach(element => {
           if (element.noteId === this.note.id) {
             const path = 'http://10.10.1.133:3000/uploads/' + element.photo;
-            this.photos.push(path);
+            this.photos.unshift(path);
+            this.note.photos.push(element);
           }
         });
       });
@@ -61,21 +62,15 @@ export class UpserNotePage implements OnInit {
     this.modalController.dismiss(this.note);
   }
 
-  toggleChange(event) {
-    console.log(event.detail.checked, 'toglech');
+  toggleChange(event: { detail: { checked: false; }; }) {
     this.note.completed = event.detail.checked;
     this.checked = event.detail.checked;
   }
-  uploadFile(files: FileList[]) {
-    console.log(files);
-    this.uploadImgNestService.uploadFile(files, this.note.id).subscribe(res => {
-      const path = 'http://10.10.1.133:3000/uploads/' + res.photo;
-      this.photos.push(path);
-    });
-  }
 
-  deleteFile(photo) {
+  deleteFile(photo: string) {
+    console.log(photo);
     const index = this.photos.indexOf(photo);
+    console.log(index);
     if (index > -1) {
       this.photos.splice(index, 1);
     }
@@ -83,7 +78,6 @@ export class UpserNotePage implements OnInit {
     .subscribe(res => {
       res.forEach(el => {
         if (photo.indexOf(el.photo) > -1) {
-          debugger;
           this.uploadImgNestService.deletePhoto(el._id, el.photo).subscribe();
       }
       });
@@ -103,113 +97,50 @@ export class UpserNotePage implements OnInit {
     await this.camera.getPicture(options).then(img => {
       const blob = this.getBlob(img, 'image/jpeg');
       console.log(blob);
-      debugger;
-      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(lol => console.log(lol));
-      debugger;
-      // this.filePath.resolveNativePath(img).then(filp => {
-      //   console.log(filp);
-      //   const webTr = this.webView.convertFileSrc(filp);
-      //   this.uploadImgNestService.uploadFile(webTr, this.note.id).subscribe(a => {console.log(a)});
-      //   console.log(webTr);
-      // });
-      // const files: File[] = [];
-      // console.log(img);
-      // let blob = this.getBlob(img, '.jpg');
-      // console.log(blob);
-      // debugger
-      // const file = new File([blob], 'image.jpg');
+      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(res => {
+        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
+        this.photos.unshift(path);
+        this.note.photos.push(res.result);
+      });
     });
-
-    
-    // await this.camera.getPicture(options).then((img) => {
-    //   window.resolveLocalFileSystemURI(img, (file => {
-    //     this.uploadImgNestService.uploadFile(file, this.note.id).subscribe();
-    //   }));
-    // });
-    // console.log(capturedTempImage);
-    // const savedImageFile = await this.savePicture(capturedTempImage);
-    // console.log(savedImageFile);
-    // console.log(this.webView.convertFileSrc(savedImageFile));
-    // this.note.image.unshift({
-    //   filepath: savedImageFile,
-    //   webviewPath: this.webView.convertFileSrc(savedImageFile)
-    // });
   }
-  // async savePicture(cameraImage) {
-  //   const tempFilename = cameraImage.substr(cameraImage.lastIndexOf('/') + 1);
-  //   const tempBaseFilesystemPath = cameraImage.substr(0, cameraImage.lastIndexOf('/') + 1);
-  //   const newBaseFilesystemPath = this.file.dataDirectory;
-  //   await this.file.copyFile(tempBaseFilesystemPath, tempFilename, newBaseFilesystemPath, tempFilename);
-  //   console.log(tempFilename);
-  //   console.log(tempBaseFilesystemPath);
-  //   console.log(newBaseFilesystemPath);
-  //   return newBaseFilesystemPath + tempFilename;
-  // }
-
-  // const tempImage = await this.camera.getPicture(options);
-  // console.log(tempImage);
-  // const tempFilename = tempImage.substr(tempImage.lastIndexOf('/') + 1);
-  // console.log(tempFilename);
-  // const tempBaseFilesystemPath = tempImage.substr(0, tempImage.lastIndexOf('/') + 1);
-  // console.log(tempBaseFilesystemPath);
-  // const newBaseFilesystemPath = this.file.dataDirectory;
-  // console.log(newBaseFilesystemPath);
-  // await this.file.copyFile(tempBaseFilesystemPath, tempFilename,
-  //   newBaseFilesystemPath, tempFilename);
-  // const storedPhoto = newBaseFilesystemPath + tempFilename;
-  // console.log(storedPhoto);
-  // const displayImage = this.webView.convertFileSrc(storedPhoto);
-  // console.log(displayImage);
-
-  // await this.camera.getPicture(options).then((imageData) => {
-  //   this.filePath.resolveNativePath(imageData)
-  //   .then((filePath) => {
-  //     console.log(filePath);
-  //     const webTransfor = this.webView.convertFileSrc(filePath);
-  //     console.log(webTransfor);
-  //     this.note.image.push(webTransfor);
-  //   })
-  //   .catch(err => console.log(err, 'upload library camera'));
-  // });
 
   async openLibrary() {
     const options: CameraOptions = {
       quality: 100,
       targetHeight: 200,
       targetWidth: 200,
-      destinationType: this.camera.DestinationType.FILE_URI,
+      destinationType: this.camera.DestinationType.DATA_URL,
       sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-      saveToPhotoAlbum: false
+      encodingType: this.camera.EncodingType.JPEG,
     };
-    await this.camera.getPicture(options).then((imageData) => {
-      this.filePath.resolveNativePath(imageData)
-        .then((filePath) => {
-          const webTransfor = this.webView.convertFileSrc(filePath);
-          console.log(webTransfor);
-        })
-        .catch(err => console.log(err, 'upload library camera'));
+    await this.camera.getPicture(options).then((img) => {
+      const blob = this.getBlob(img, 'image/jpeg');
+      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
+        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
+        this.photos.unshift(path);
+        this.note.photos.push(res.result);
+      });
     });
   }
 
-  private getBlob(b64Data:string, contentType:string, sliceSize:number= 512) {
+  private getBlob(b64Data: string, contentType: string, sliceSize: number= 512) {
     contentType = contentType || '';
     sliceSize = sliceSize || 512;
-    let byteCharacters = atob(b64Data);
-    let byteArrays = [];
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        let slice = byteCharacters.slice(offset, offset + sliceSize);
-
-        let byteNumbers = new Array(slice.length);
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
         for (let i = 0; i < slice.length; i++) {
             byteNumbers[i] = slice.charCodeAt(i);
         }
 
-        let byteArray = new Uint8Array(byteNumbers);
-
+        const byteArray = new Uint8Array(byteNumbers);
         byteArrays.push(byteArray);
     }
-    let blob = new Blob(byteArrays, {type: contentType});
+    const blob = new Blob(byteArrays, {type: contentType});
     return blob;
 }
 }

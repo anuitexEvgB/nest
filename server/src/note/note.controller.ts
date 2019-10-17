@@ -1,7 +1,7 @@
 import { PhotoService } from './photo/photo.service';
 import { NoteDto } from './../DTO/note.dto';
 import { ObjectID } from 'typeorm';
-import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { NoteService } from './note.service';
 import { Note } from 'src/models/note.model';
@@ -36,15 +36,16 @@ export class NoteController {
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: ObjectID) {
+    async delete(@Param('id') id: string) {
         return await this.noteService.deleteNoteId(id);
     }
 
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
-    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID) {
-        console.log(photo);
-        return await this.photoService.addPhotoToNote(id, photo);
+    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res) {
+        const result = await this.photoService.addPhotoToNote(id, photo);
+        res.status(HttpStatus.OK).json({ result });
+
     }
 
     @Get('getPhotos/:id')

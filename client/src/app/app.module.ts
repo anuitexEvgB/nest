@@ -11,7 +11,7 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
-// import { IonicImageLoader } from 'ionic-image-loader';
+import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -27,7 +27,13 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
 @NgModule({
   declarations: [AppComponent, UpserNotePage ],
   entryComponents: [UpserNotePage],
-  imports: [FormsModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  imports: [
+    FormsModule,
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    HttpClientModule,
+  ],
   providers: [
     UploadImgNestService,
     NestMongoService,
@@ -41,7 +47,8 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     Geolocation,
     LocationAccuracy,
     AndroidPermissions,
-    NativeGeocoder
+    NativeGeocoder,
+    PhotoViewer
   ],
   bootstrap: [AppComponent]
 })

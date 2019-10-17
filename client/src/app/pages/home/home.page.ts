@@ -17,6 +17,7 @@ export class HomePage implements OnInit {
     public modalController: ModalController,
     private nestMongoService: NestMongoService,
     private router: Router,
+    private uploadImgNestService: UploadImgNestService
     ) {}
 
   ngOnInit() {
@@ -46,7 +47,7 @@ export class HomePage implements OnInit {
   delete(note: Note) {
     const index = this.notes.indexOf(note);
     if (index > -1) {
-      this.notes.splice(index, 1); 
+      this.notes.splice(index, 1);
       this.nestMongoService.deleteNoteId(note.id).subscribe();
       return;
     }
@@ -69,21 +70,22 @@ export class HomePage implements OnInit {
       for (let index = 0; index < this.notes.length; index++) {
         if (this.notes[index] === data) {
           this.notes[index] = data;
-          this.nestMongoService.updateNote(data).subscribe(res => console.log(res));
+          this.nestMongoService.updateNote(data).subscribe(res => console.log(res + 'edit'));
           foundEdit = true;
           break;
         }
       }
       if (!foundEdit) {
         this.nestMongoService.postNotes(data).subscribe(t => {
+          console.log(t);
           this.notes.push(t);
         });
       }
     }
   }
 
-  geoPage() {
-    this.router.navigate(['/', 'geolocation']);
+  navigateToGeo() {
+    this.router.navigate(['geolocation']);
   }
 
   autoClose(slidingItem: IonItemSliding) {
