@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>geolocation</ion-title>
+    <ion-title>
+      {{address.countryName || "-"  }}
+      {{address.administrativeArea || "-"}}
+    </ion-title>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"></ion-back-button>
   </ion-buttons>
@@ -9,6 +12,10 @@
 
 <ion-content>
   <div id="map_canvas"></div>
+  <ion-button size="large" expand="full" color="dark" (click)="geo()">
+    <ion-icon name="md-pin" name="ios-pin"></ion-icon>
+    Add location
+  </ion-button>
   <!-- <ion-grid fixed>
     <ion-row>
       <ion-col text-center>

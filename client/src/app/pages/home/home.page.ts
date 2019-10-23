@@ -1,10 +1,11 @@
 import { UploadImgNestService } from './../../services/upload-img-nest.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UpserNotePage } from './../upser-note/upser-note.page';
 import { Component, OnInit } from '@angular/core';
 import { IonItemSliding, ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { NestMongoService } from 'src/app/services/nest-mongo.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-home',
@@ -13,11 +14,14 @@ import { NestMongoService } from 'src/app/services/nest-mongo.service';
 })
 export class HomePage implements OnInit {
   notes: Note[];
+
   constructor(
     public modalController: ModalController,
     private nestMongoService: NestMongoService,
     private router: Router,
-    private uploadImgNestService: UploadImgNestService
+    private route: ActivatedRoute,
+    private uploadImgNestService: UploadImgNestService,
+    private  storage: Storage
     ) {}
 
   ngOnInit() {
@@ -29,15 +33,35 @@ export class HomePage implements OnInit {
     event.target.complete();
   }
 
-  add() {
-    this.presentModal();
-  }
-
   getAll() {
     this.nestMongoService.getNotes()
     .subscribe(response => {
       this.notes = response;
     });
+  }
+
+  test() {
+    let a = this.storage.get('ACCESS_TOKEN');
+    console.log(a);
+    this.storage.remove('ACCESS_TOKEN');
+    let b = this.storage.get('ACCESS_TOKEN');
+    console.log(b);
+  }
+
+  logout() {
+    let a = this.storage.get('ACCESS_TOKEN');
+    console.log(a);
+    this.storage.remove('ACCESS_TOKEN');
+    let b = this.storage.get('ACCESS_TOKEN');
+    console.log(b);
+    this.router.navigateByUrl('login');
+  }
+  // add() {
+  //   this.router.navigate(['upser-note']);
+  // }
+
+  add() {
+    this.presentModal();
   }
 
   async edit(note: Note) {
@@ -55,7 +79,8 @@ export class HomePage implements OnInit {
 
    async presentModal(note?: Note) {
     const modalObj =  {
-      component: UpserNotePage
+      component: UpserNotePage,
+      showBackdrop: false,
     };
 
     if (note) {

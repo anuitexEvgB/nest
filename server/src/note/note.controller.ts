@@ -1,11 +1,12 @@
 import { PhotoService } from './photo/photo.service';
 import { NoteDto } from './../DTO/note.dto';
 import { ObjectID } from 'typeorm';
-import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { NoteService } from './note.service';
-import { Note } from 'src/models/note.model';
-import { MulterOptions } from 'src/LoadConfg/multer-config';
+import { Note } from '../models/note.model';
+import { MulterOptions } from '../LoadConfg/multer-config';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('note')
 export class NoteController {
@@ -15,31 +16,37 @@ export class NoteController {
         private photoService: PhotoService,
     ) { }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get()
     async getNotes() {
         return await this.noteService.getNotes();
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Post()
     async create(@Body() note: NoteDto) {
         return await this.noteService.addNote(note);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get('getPhotos')
     async getPhotos() {
         return await this.photoService.getPhotoToNote();
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Put(':id')
     async update(@Param('id') id: ObjectID, @Body() note: Note) {
         return await this.noteService.updateNote(id, note);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Delete(':id')
     async delete(@Param('id') id: string) {
         return await this.noteService.deleteNoteId(id);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
     async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res) {
@@ -48,11 +55,13 @@ export class NoteController {
 
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get('getPhotos/:id')
     async getPhoto(@Param('id') id: ObjectID) {
         return await this.photoService.getPhotoToNoteById(id);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('deletePhotos/:photoId')
     async deletePhoto(@Param('photoId') id: string, @Body() namePhoto: any) {
         return await this.photoService.deletePhoto(id, namePhoto);

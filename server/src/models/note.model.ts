@@ -16,4 +16,10 @@ export class Note {
 
     @Column()
     completed: boolean;
+
+    @Column()
+    latLng: {
+        lat: number,
+        lng: number,
+    };
 }

@@ -1,29 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID } from 'typeorm';
-import { Photo } from 'src/models/photo.model';
+import { Photo } from '../../models/photo.model';
 import { fileURLToPath } from 'url';
 
 @Injectable()
 export class PhotoService {
-    constructor(@InjectRepository(Photo) private noteRepository: Repository<Photo>) {}
+    constructor(@InjectRepository(Photo) private photoRepository: Repository<Photo>) {}
 
     async addPhotoToNote(id: ObjectID, photo: Photo) {
         const photoToSave = {
             noteId: id,
             photo: photo[0].filename,
         } as any;
-        const res = await this.noteRepository.save(photoToSave);
+        const res = await this.photoRepository.save(photoToSave);
         return res;
     }
 
     async getPhotoToNote(): Promise<Photo[]> {
-        const res = await this.noteRepository.find();
+        const res = await this.photoRepository.find();
         return res;
     }
 
     async getPhotoToNoteById(id: ObjectID): Promise<Photo | undefined> {
-        return await this.noteRepository.findOne(id);
+        return await this.photoRepository.findOne(id);
     }
 
     async deletePhoto(id: string, namePhoto) {
@@ -35,6 +35,6 @@ export class PhotoService {
             // tslint:disable-next-line: no-console
             console.error(err, ' Eror unlinka');
         });
-        return await this.noteRepository.delete(id);
+        return await this.photoRepository.delete(id);
     }
 }

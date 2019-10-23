@@ -6,4 +6,8 @@ export class NoteDto {
     readonly text: string;
     readonly photos: any;
     readonly completed: boolean;
+    readonly latLng: {
+        lat: number,
+        lng: number,
+    };
 }

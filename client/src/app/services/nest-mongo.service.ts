@@ -8,28 +8,28 @@ import { Observable } from 'rxjs';
 })
 export class NestMongoService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   API_URL = 'http://10.10.1.133:3000/note';
 
   getNotes(): Observable<Note[]> {
-    return this.httpClient.get<Note[]>(this.API_URL);
+    return this.http.get<Note[]>(this.API_URL);
   }
 
   getNotesById(id: number): Observable<Note[]> {
-    return this.httpClient.get<Note[]>(`${this.API_URL}/${id}`);
+    return this.http.get<Note[]>(`${this.API_URL}/${id}`);
   }
 
   postNotes(data: Note): Observable<Note> {
-    const result =  this.httpClient.post<Note>(this.API_URL, data);
+    const result =  this.http.post<Note>(this.API_URL, data);
     return result;
   }
 
   deleteNoteId(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.API_URL}/${id}`);
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
   }
 
   updateNote(data: Note): Observable<Note> {
-    return this.httpClient.put<Note>(`${this.API_URL}/${data.id}`, data);
+    return this.http.put<Note>(`${this.API_URL}/${data.id}`, data);
   }
 }

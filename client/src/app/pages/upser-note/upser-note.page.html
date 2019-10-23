@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content>
+  <div style="z-index: 10000;" id="map_canvas"></div>
   <form (ngSubmit)="onSubmit()" >
     <ion-item>
         <ion-label>Title</ion-label>
@@ -21,30 +22,30 @@
       <ion-label>Done</ion-label>
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
+   
+    <ion-item>
+      <ion-button color="tertiary" size="large" (click)="openLibrary()">
+        <ion-icon slot="start" name="image"></ion-icon>
+        Library
+      </ion-button>
+      <ion-button color="secondary" size="large" (click)="addPhoto()">
+        <ion-icon slot="start" name="camera"></ion-icon>
+        Camera
+      </ion-button>
+    </ion-item>
 
-      <ion-item>
-        <ion-button color="tertiary" size="large" (click)="openLibrary()">
-          <ion-icon slot="start" name="image"></ion-icon>
-          Library
-        </ion-button>
-        <ion-button color="secondary" size="large" (click)="addPhoto()">
-          <ion-icon slot="start" name="camera"></ion-icon>
-          Camera
-        </ion-button>
-      </ion-item>
+    <ion-list>
+        <ion-item *ngFor="let photo of photos">
+          <ion-thumbnail slot="start" (click)="showPhoto(photo)">
+            <ion-img [src]="photo"></ion-img>
+          </ion-thumbnail>
+          <ion-label>{{photo || "-"}}</ion-label>
+          <ion-button slot="end" fill="clear" (click)="deleteFile(photo)">
+              <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+    </ion-list>
 
-      <ion-list>
-          <ion-item *ngFor="let photo of photos">
-            <ion-thumbnail slot="start" (click)="showPhoto(photo)">
-              <ion-img [src]="photo"></ion-img>
-            </ion-thumbnail>
-            <ion-label>{{photo || "-"}}</ion-label>
-            <ion-button slot="end" fill="clear" (click)="deleteFile(photo)">
-                <ion-icon slot="icon-only" name="trash"></ion-icon>
-              </ion-button>
-          </ion-item>
-      </ion-list>
-
-        <ion-button class="button-submit" size="large" color="success" expand="full" type="submit">Save</ion-button>
+    <ion-button class="button-submit" size="large" color="success" expand="full" type="submit">Save</ion-button>
   </form>
 </ion-content>

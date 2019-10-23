@@ -1,9 +1,29 @@
+import { Router } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { UploadImgNestService } from './../../services/upload-img-nest.service';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
+import {
+  ToastController,
+  Platform
+} from '@ionic/angular';
+import {
+  GoogleMaps,
+  GoogleMap,
+  GoogleMapsEvent,
+  Marker,
+  GoogleMapsAnimation,
+  MyLocation,
+  GoogleMapOptions,
+  LatLng
+} from '@ionic-native/google-maps';
+import {
+  NativeGeocoder,
+  NativeGeocoderOptions,
+  NativeGeocoderResult,
+} from '@ionic-native/native-geocoder/ngx';
 
 
 @Component({
@@ -16,12 +36,26 @@ export class UpserNotePage implements OnInit {
   checked: false;
   photos = [];
 
+  map: GoogleMap;
+  address = {
+    countryName: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    thoroughfare: '',
+    subLocality: '',
+    subThoroughfare: '',
+  };
+
 
   constructor(
     public modalController: ModalController,
-    private camera: Camera,
-    private uploadImgNestService: UploadImgNestService,
-    private photoViewer: PhotoViewer,
+    public camera: Camera,
+    public uploadImgNestService: UploadImgNestService,
+    public photoViewer: PhotoViewer,
+    public toastCtrl: ToastController,
+    public platform: Platform,
+    public nativeGeocoder: NativeGeocoder,
+    public router: Router
   ) {
     this.uploadPhoto();
   }
@@ -33,9 +67,161 @@ export class UpserNotePage implements OnInit {
         text: '',
         photos: [],
         completed: false,
+        latLng: {
+          lat: 0,
+          lng: 0,
+        }
       };
     }
+    this.platform.ready();
+    this.loadMap();
+    this.geoCoder(this.note.latLng.lat, this.note.latLng.lng);
   }
+
+  // GEOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+  ionViewWillLeave() {
+    const nodeList = document.querySelectorAll('._gmaps_cdv_');
+
+    for (let k = 0; k < nodeList.length; ++k) {
+        nodeList.item(k).classList.remove('_gmaps_cdv_');
+    }
+  }
+
+  loadMap() {
+
+    this.map = GoogleMaps.create('map_canvas', {
+      camera: {
+        target: {
+          lat: this.note.latLng.lat,
+          lng: this.note.latLng.lng
+        },
+        zoom: 18,
+        tilt: 30,
+        duration: 5000,
+      }
+});
+    const mark: Marker = this.map.addMarkerSync({
+      title: 'Ты тут',
+      icon: 'blue',
+      animation: GoogleMapsAnimation.BOUNCE,
+      position: {
+        lat: this.note.latLng.lat,
+        lng: this.note.latLng.lng
+      }
+    });
+    mark.on(GoogleMapsEvent.MAP_READY).subscribe();
+    this.map.on(GoogleMapsEvent.MAP_LONG_CLICK).subscribe((params: any[]) => {
+      this.map.clear();
+
+      let geo: LatLng = params[0];
+      console.log(geo);
+      this.note.latLng.lat = geo.lat;
+      this.note.latLng.lng = geo.lng;
+      this.geoCoder(this.note.latLng.lat, this.note.latLng.lng);
+      console.log(this.note.latLng.lat, this.note.latLng.lng);
+      this.map.addMarkerSync({
+        position: this.note.latLng,
+        title: 'Ты тут',
+        animation: GoogleMapsAnimation.BOUNCE,
+      });
+    });
+    if (this.note.latLng.lat === 0 && this.note.latLng.lng === 0) {
+      this.goToMyLocation();
+    }
+  }
+
+  goToMyLocation() {
+    this.map.clear();
+
+    // Get the location of you
+    this.map.getMyLocation().then((location: MyLocation) => {
+      this.geoCoder(location.latLng.lat, location.latLng.lng);
+      this.note.latLng.lat = location.latLng.lat;
+      this.note.latLng.lng = location.latLng.lng;
+      // Move the map camera to the location with animation
+      this.map.animateCamera({
+        target: location.latLng,
+        zoom: 17,
+        duration: 5000
+      });
+
+      //add a marker
+      let marker: Marker = this.map.addMarkerSync({
+        title: 'Ты тут',
+        position: location.latLng,
+        animation: GoogleMapsAnimation.BOUNCE
+      });
+
+      //show the infoWindow
+      marker.showInfoWindow();
+
+      //If clicked it, display the alert
+      marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+        this.showToast('clicked!');
+      });
+
+      this.map.on(GoogleMapsEvent.MAP_READY).subscribe(
+        (data) => {
+            console.log("Click MAP", data);
+        }
+      );
+    })
+    .catch(err => {
+      //this.loading.dismiss();
+      this.showToast(err.error_message);
+    });
+  }
+
+  async showToast(message: string) {
+    let toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      position: 'middle'
+    });
+    toast.present();
+  }
+
+  geoCoder(lat: number, long: number) {
+    let options: NativeGeocoderOptions = {
+      useLocale: true,
+      maxResults: 2,
+    };
+    this.nativeGeocoder.reverseGeocode(lat, long, options)
+    .then((res: NativeGeocoderResult[]) => {
+      console.log(res);
+      this.address = {
+        countryName: `${res[0].countryName}`,
+        administrativeArea: `${res[0].administrativeArea}`,
+        subAdministrativeArea: `${res[0].subAdministrativeArea}`,
+        thoroughfare: `${res[0].thoroughfare}`,
+        subLocality: `${res[0].subLocality}`,
+        subThoroughfare: `${res[0].subThoroughfare}`,
+      };
+      console.log(this.address);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   showPhoto(img: string) {
     this.photoViewer.show(img, 'Photo');
@@ -54,8 +240,16 @@ export class UpserNotePage implements OnInit {
       });
   }
 
-  close() {
-    this.modalController.dismiss();
+  async close() {
+    // this.ionViewWillLeave();
+    await this.modalController.dismiss();
+    const undef = this.note.photos;
+    await undef.forEach((del: { noteId: string; _id: string; photo: any; }) => {
+      console.log(del.noteId);
+      if (del.noteId === 'undefined') {
+        this.uploadImgNestService.deletePhoto(del._id, del.photo).subscribe();
+      }
+    });
   }
 
   onSubmit() {

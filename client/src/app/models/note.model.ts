@@ -4,4 +4,8 @@ export interface Note {
     text: string;
     photos: any;
     completed: boolean;
+    latLng: {
+        lat: number,
+        lng: number
+    };
 }

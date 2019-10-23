@@ -1,8 +1,9 @@
+import { InterceptorProvider } from './prodivers/interceptor';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -17,12 +18,14 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NestMongoService } from './services/nest-mongo.service';
 import { UpserNotePage } from './pages/upser-note/upser-note.page';
 import { UploadImgNestService } from './services/upload-img-nest.service';
+
 
 @NgModule({
   declarations: [AppComponent, UpserNotePage ],
@@ -31,6 +34,7 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     FormsModule,
     BrowserModule,
     IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
   ],
@@ -40,6 +44,7 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: InterceptorProvider, multi: true },
     Camera,
     File,
     FilePath,

@@ -9,8 +9,15 @@ import {
   GoogleMapsEvent,
   Marker,
   GoogleMapsAnimation,
-  MyLocation
+  MyLocation,
+  GoogleMapOptions,
+  LatLng
 } from '@ionic-native/google-maps';
+import {
+  NativeGeocoder,
+  NativeGeocoderOptions,
+  NativeGeocoderResult,
+} from '@ionic-native/native-geocoder/ngx';
 
 @Component({
   selector: 'app-geolocation',
@@ -20,43 +27,74 @@ import {
 export class GeolocationPage implements OnInit {
 
   map: GoogleMap;
-  address: string;
+  address = {
+    countryName: '',
+    administrativeArea: '',
+    subAdministrativeArea: '',
+    thoroughfare: '',
+    subLocality: '',
+    subThoroughfare: '',
+  };
 
-  locationCoords: any;
   timetest: any;
+
+  latLng = {
+    lat: 0,
+    lng: 0,
+  };
 
   constructor(
     private toastCtrl: ToastController,
     private platform: Platform,
-
+    private nativeGeocoder: NativeGeocoder,
   ) {}
 
   ngOnInit() {
     this.platform.ready();
     this.loadMap();
+    this.geoCoder(this.latLng.lat, this.latLng.lng);
   }
+
+  geo() {}
 
   loadMap() {
-    this.map = GoogleMaps.create('map_canvas', {
-      camera: {
-        target: {
-          lat: 43.0741704,
-          lng: -89.3809802
-        },
-        zoom: 18,
-        tilt: 30
+    let options: GoogleMapOptions = {
+      controls: {
+        compass: true,
+        myLocation: true,
+        myLocationButton: true,
+        mapToolbar: true
       }
-    });
-    this.goToMyLocation();
+    };
+    this.map = GoogleMaps.create('map_canvas', options);
+    // this.map.on(GoogleMapsEvent.MAP_LONG_CLICK).subscribe((params: any[]) => {
+    //   this.map.clear();
+    //   console.log(params);
+    //   let geo: LatLng = params[0];
+    //   console.log(geo);
+    //   this.latLng.lat = geo.lat;
+    //   this.latLng.lng = geo.lng;
+    //   this.geoCoder(this.latLng.lat, this.latLng.lng);
+    //   console.log(this.latLng.lat, this.latLng.lng);
+    //   this.map.addMarkerSync({
+    //     position: this.latLng,
+    //     title: 'Ты here',
+    //     animation: GoogleMapsAnimation.BOUNCE,
+    //   });
+    // });
+    if (this.latLng.lat === 0 && this.latLng.lng === 0) {
+      this.goToMyLocation();
+    }
   }
 
-  goToMyLocation(){
+  goToMyLocation() {
     this.map.clear();
 
     // Get the location of you
     this.map.getMyLocation().then((location: MyLocation) => {
-      console.log(JSON.stringify(location, null , 2));
-
+      this.geoCoder(location.latLng.lat, location.latLng.lng);
+      this.latLng.lat = location.latLng.lat;
+      this.latLng.lng = location.latLng.lng;
       // Move the map camera to the location with animation
       this.map.animateCamera({
         target: location.latLng,
@@ -66,8 +104,7 @@ export class GeolocationPage implements OnInit {
 
       //add a marker
       let marker: Marker = this.map.addMarkerSync({
-        title: 'AAAAAAAAAAAAAAAA',
-        snippet: 'YOUR THERE',
+        title: 'Ты тут',
         position: location.latLng,
         animation: GoogleMapsAnimation.BOUNCE
       });
@@ -82,7 +119,7 @@ export class GeolocationPage implements OnInit {
 
       this.map.on(GoogleMapsEvent.MAP_READY).subscribe(
         (data) => {
-            console.log("Click MAP",data);
+            console.log("Click MAP", data);
         }
       );
     })
@@ -101,8 +138,35 @@ export class GeolocationPage implements OnInit {
     toast.present();
   }
 
+  geoCoder(lat: number, long: number) {
+    let options: NativeGeocoderOptions = {
+      useLocale: true,
+      maxResults: 2,
+    };
+    this.nativeGeocoder.reverseGeocode(lat, long, options)
+    .then((res: NativeGeocoderResult[]) => {
+      console.log(res);
+      this.address = {
+        countryName: `${res[0].countryName}`,
+        administrativeArea: `${res[0].administrativeArea}`,
+        subAdministrativeArea: `${res[0].subAdministrativeArea}`,
+        thoroughfare: `${res[0].thoroughfare}`,
+        subLocality: `${res[0].subLocality}`,
+        subThoroughfare: `${res[0].subThoroughfare}`,
+      };
+      console.log(this.address);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
 
+
+    // this.nativeGeocoder.forwardGeocode('Berlin')
+    // .then((result: NativeGeocoderResult[]) => {
+    //   console.log('The coordinates are latitude=' + result[0].latitude + ' and longitude=' + result[0].longitude);
+    // });
+  }
 
 
 

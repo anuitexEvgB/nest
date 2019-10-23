@@ -1,5 +1,5 @@
 import { Photo } from './../models/photo.model';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -14,7 +14,7 @@ export class UploadImgNestService {
     const data = new FormData();
     data.append('file', files);
     return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data)
-    
+
     // console.log(files);
     // const data = new FormData();
     // // tslint:disable-next-line: prefer-for-of

@@ -1,7 +1,7 @@
 import { Photo } from './../models/photo.model';
 import { NoteDto } from './../DTO/note.dto';
 import { Injectable } from '@nestjs/common';
-import { Note } from 'src/models/note.model';
+import { Note } from '../models/note.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID, getConnection } from 'typeorm';
 import { Observable } from 'rxjs';
