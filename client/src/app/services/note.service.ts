@@ -1,7 +1,7 @@
-import { Note } from './../models/note.model';
+import { Note } from '../models/note.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,10 @@ import { Observable } from 'rxjs';
 export class NestMongoService {
 
   constructor(private http: HttpClient) { }
+
+  public selectedNote: Note;
+  public postNote: Note;
+  public noteSubject = new Subject<Note>();
 
   API_URL = 'http://10.10.1.133:3000/note';
 

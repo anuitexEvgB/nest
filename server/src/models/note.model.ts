@@ -22,4 +22,7 @@ export class Note {
         lat: number,
         lng: number,
     };
+
+    @Column()
+    userId: string;
 }

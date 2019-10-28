@@ -13,7 +13,7 @@ export class UploadImgNestService {
   uploadFile(files: any, id: number): Observable<any> {
     const data = new FormData();
     data.append('file', files);
-    return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data)
+    return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data);
 
     // console.log(files);
     // const data = new FormData();

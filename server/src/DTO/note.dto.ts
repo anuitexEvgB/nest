@@ -10,4 +10,5 @@ export class NoteDto {
         lat: number,
         lng: number,
     };
+    readonly userId: string;
 }

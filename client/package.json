@@ -27,6 +27,7 @@
     "@ionic-native/file-path": "^5.15.0",
     "@ionic-native/geolocation": "^5.15.0",
     "@ionic-native/google-maps": "^5.5.0",
+    "@ionic-native/google-plus": "^5.15.1",
     "@ionic-native/ionic-webview": "^5.14.0",
     "@ionic-native/location-accuracy": "^5.15.0",
     "@ionic-native/native-geocoder": "^5.15.0",
@@ -43,6 +44,7 @@
     "cordova-plugin-filepath": "^1.5.6",
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-plugin-googlemaps": "^2.6.2",
+    "cordova-plugin-googleplus": "^8.2.0",
     "cordova-plugin-nativegeocoder": "^3.2.2",
     "cordova-plugin-request-location-accuracy": "^2.3.0",
     "cordova-sqlite-storage": "^3.4.0",
@@ -107,7 +109,10 @@
       "cordova-plugin-nativegeocoder": {},
       "com-sarriaroman-photoviewer": {},
       "cordova-plugin-googlemaps": {},
-      "cordova-sqlite-storage": {}
+      "cordova-sqlite-storage": {},
+      "cordova-plugin-googleplus": {
+        "PLAY_SERVICES_VERSION": "15.0.1"
+      }
     },
     "platforms": [
       "android"

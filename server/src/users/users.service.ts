@@ -1,11 +1,11 @@
 import { User } from './../models/user.model';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ObjectID } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private UserRepository: Repository<User>) {}
+    constructor(@InjectRepository(User) private UserRepository: Repository<User>) { }
 
     async findByEmail(email: string): Promise<User> {
         return await this.UserRepository.findOne({
@@ -15,12 +15,9 @@ export class UsersService {
         });
     }
 
-    async findById(id: ObjectID): Promise<User> {
-        return await this.UserRepository.findOne({
-            where: {
-                id,
-            },
-        });
+    async findById(id: string): Promise<User> {
+        const res = await this.UserRepository.findOne(id);
+        return res;
     }
 
     async create(user: User): Promise<User> {

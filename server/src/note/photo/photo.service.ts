@@ -6,7 +6,9 @@ import { fileURLToPath } from 'url';
 
 @Injectable()
 export class PhotoService {
-    constructor(@InjectRepository(Photo) private photoRepository: Repository<Photo>) {}
+    constructor(
+        @InjectRepository(Photo) private photoRepository: Repository<Photo>,
+        ) {}
 
     async addPhotoToNote(id: ObjectID, photo: Photo) {
         const photoToSave = {

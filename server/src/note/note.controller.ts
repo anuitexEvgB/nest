@@ -1,7 +1,7 @@
 import { PhotoService } from './photo/photo.service';
 import { NoteDto } from './../DTO/note.dto';
 import { ObjectID } from 'typeorm';
-import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { NoteService } from './note.service';
 import { Note } from '../models/note.model';
@@ -18,8 +18,9 @@ export class NoteController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    async getNotes() {
-        return await this.noteService.getNotes();
+    async getNotes(@Req() req) {
+        const user = req.user;
+        return await this.noteService.getNotes(user.id);
     }
 
     @UseGuards(AuthGuard('jwt'))

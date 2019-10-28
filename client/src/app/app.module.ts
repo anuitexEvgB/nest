@@ -1,3 +1,4 @@
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { InterceptorProvider } from './prodivers/interceptor';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
@@ -22,14 +23,14 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { NestMongoService } from './services/nest-mongo.service';
+import { NestMongoService } from './services/note.service';
 import { UpserNotePage } from './pages/upser-note/upser-note.page';
 import { UploadImgNestService } from './services/upload-img-nest.service';
 
 
 @NgModule({
-  declarations: [AppComponent, UpserNotePage ],
-  entryComponents: [UpserNotePage],
+  declarations: [AppComponent ],
+  entryComponents: [],
   imports: [
     FormsModule,
     BrowserModule,
@@ -53,7 +54,8 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     LocationAccuracy,
     AndroidPermissions,
     NativeGeocoder,
-    PhotoViewer
+    PhotoViewer,
+    GooglePlus
   ],
   bootstrap: [AppComponent]
 })

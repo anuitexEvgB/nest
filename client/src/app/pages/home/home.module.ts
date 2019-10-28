@@ -1,3 +1,4 @@
+// import { UpserNotePage } from './../upser-note/upser-note.page';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -18,6 +19,7 @@ import { HomePage } from './home.page';
       }
     ])
   ],
-  declarations: [HomePage]
+  declarations: [HomePage],
+  // providers: [UpserNotePage]
 })
 export class HomePageModule {}

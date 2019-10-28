@@ -12,11 +12,6 @@ export class User {
     @Column()
     email: string;
 
-    // @BeforeInsert()
-    // hasPassword() {
-    //     this.password = crypto.createHmac('sha256', this.password).digest('hex');
-    // }
-
     @Column()
     password: string;
 }

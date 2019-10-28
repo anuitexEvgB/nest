@@ -4,8 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { Note } from '../models/note.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID, getConnection } from 'typeorm';
-import { Observable } from 'rxjs';
-import { getMongoManager } from 'typeorm';
 
 @Injectable()
 export class NoteService {
@@ -15,8 +13,13 @@ export class NoteService {
         @InjectRepository(Photo) private photoRepository: Repository<Photo>,
     ) { }
 
-    public async getNotes(): Promise<Note[]> {
-        return await this.noteRepository.find();
+    public async getNotes(id): Promise<Note[]> {
+        const note = await this.noteRepository.find({
+            where: {
+                userId: String(id),
+            },
+       });
+        return note;
     }
 
     async getNote(id: ObjectID): Promise<Note | undefined> {
@@ -27,7 +30,6 @@ export class NoteService {
         const savedNote = await this.noteRepository.save(note);
         // save images
         const images = savedNote.photos;
-        const id = savedNote.photos;
         images.forEach(x => {
             x.noteId = savedNote.id;
         });

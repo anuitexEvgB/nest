@@ -9,12 +9,8 @@ import { Note } from './models/note.model';
 import { MulterModule } from '@nestjs/platform-express';
 import { PhotoService } from './note/photo/photo.service';
 import { Photo } from './models/photo.model';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './users/auth/auth.service';
-import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './users/jwt.strategy';
+
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -26,21 +22,13 @@ import { JwtStrategy } from './users/jwt.strategy';
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
-    TypeOrmModule.forFeature([Note, Photo, User]),
+    TypeOrmModule.forFeature([Note, Photo]),
     MulterModule.register({
       dest: 'uploads/',
     }),
-    PassportModule.register({
-      defaultStrategy: 'jwt',
-    }),
-    JwtModule.register({
-      secret: 'aye228',
-      // signOptions: {
-      //   expiresIn: 3600,
-      // },
-    }),
+    UsersModule,
   ],
-  controllers: [AppController, NoteController, UsersController],
-  providers: [AppService, NoteService, PhotoService, UsersService, AuthService, JwtStrategy],
+  controllers: [AppController, NoteController],
+  providers: [AppService, NoteService, PhotoService ],
 })
 export class AppModule {}

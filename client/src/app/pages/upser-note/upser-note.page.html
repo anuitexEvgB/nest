@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <div style="z-index: 10000;" id="map_canvas"></div>
+  <div id="map_canvas"></div>
   <form (ngSubmit)="onSubmit()" >
     <ion-item>
         <ion-label>Title</ion-label>
@@ -39,7 +39,7 @@
           <ion-thumbnail slot="start" (click)="showPhoto(photo)">
             <ion-img [src]="photo"></ion-img>
           </ion-thumbnail>
-          <ion-label>{{photo || "-"}}</ion-label>
+          <ion-label>{{note.text|| "-"}}</ion-label>
           <ion-button slot="end" fill="clear" (click)="deleteFile(photo)">
               <ion-icon slot="icon-only" name="trash"></ion-icon>
           </ion-button>

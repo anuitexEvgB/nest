@@ -22,10 +22,9 @@ export class AuthService {
   register(user: User): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.AUTH_SERVER_ADDRESS}/register`, user).pipe(
       tap(async (res: UserResponse) => {
-        console.log(res);
         if (res) {
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
-          await this.storage.set('EXPIRES_IN', res.expires_in);
+          await this.storage.set('USER_ID', res.user_id);
           this.authSubject.next(true);
         }
       })
@@ -35,10 +34,9 @@ export class AuthService {
   login(user: User): Observable<UserResponse> {
     return this.http.post(`${this.AUTH_SERVER_ADDRESS}/login`, user).pipe(
       tap(async (res: UserResponse) => {
-        console.log(res);
         if (res) {
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
-          await this.storage.set('EXPIRES_IN', res.expires_in);
+          await this.storage.set('USER_ID', res.user_id);
           this.authSubject.next(true);
         }
       })
@@ -47,7 +45,7 @@ export class AuthService {
 
   async logout() {
     await this.storage.remove('ACCESS_TOKEN');
-    await this.storage.remove('EXPIRES_IN');
+    await this.storage.remove('USER_ID');
     this.authSubject.next(false);
   }
 
@@ -57,9 +55,12 @@ export class AuthService {
 
   public async getToken() {
     return await this.storage.get('ACCESS_TOKEN').then(a => {
-      console.log(a);
       return JSON.parse(a);
     });
-}
+  }
+
+  loginGoogle(user: any): Observable<any> {
+    return this.http.post(`${this.AUTH_SERVER_ADDRESS}/google`, user);
+  }
 
 }

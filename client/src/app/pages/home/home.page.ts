@@ -1,11 +1,9 @@
-import { UploadImgNestService } from './../../services/upload-img-nest.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { UpserNotePage } from './../upser-note/upser-note.page';
+import { AuthService } from './../../services/auth.service';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IonItemSliding, ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
-import { NestMongoService } from 'src/app/services/nest-mongo.service';
-import { Storage } from '@ionic/storage';
+import { NestMongoService } from 'src/app/services/note.service';
 
 @Component({
   selector: 'app-home',
@@ -14,15 +12,19 @@ import { Storage } from '@ionic/storage';
 })
 export class HomePage implements OnInit {
   notes: Note[];
+  ha: any[];
 
   constructor(
     public modalController: ModalController,
-    private nestMongoService: NestMongoService,
+    private noteService: NestMongoService,
     private router: Router,
     private route: ActivatedRoute,
-    private uploadImgNestService: UploadImgNestService,
-    private  storage: Storage
-    ) {}
+    private authService: AuthService
+    ) {
+      this.noteService.noteSubject.subscribe((res) => {
+        this.notes.push(res);
+      });
+    }
 
   ngOnInit() {
     this.getAll();
@@ -34,83 +36,38 @@ export class HomePage implements OnInit {
   }
 
   getAll() {
-    this.nestMongoService.getNotes()
+    this.noteService.getNotes()
     .subscribe(response => {
       this.notes = response;
     });
   }
 
-  test() {
-    let a = this.storage.get('ACCESS_TOKEN');
-    console.log(a);
-    this.storage.remove('ACCESS_TOKEN');
-    let b = this.storage.get('ACCESS_TOKEN');
-    console.log(b);
+  async logout() {
+    await this.authService.logout();
+    await this.router.navigateByUrl('login');
   }
-
-  logout() {
-    let a = this.storage.get('ACCESS_TOKEN');
-    console.log(a);
-    this.storage.remove('ACCESS_TOKEN');
-    let b = this.storage.get('ACCESS_TOKEN');
-    console.log(b);
-    this.router.navigateByUrl('login');
-  }
-  // add() {
-  //   this.router.navigate(['upser-note']);
-  // }
 
   add() {
-    this.presentModal();
+    this.router.navigate(['upser-note']);
   }
 
   async edit(note: Note) {
-    await this.presentModal(note);
+    this.noteService.selectedNote = note;
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+       edit: true,
+      }
+    };
+    await this.router.navigate(['upser-note'], navigationExtras);
   }
 
   delete(note: Note) {
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);
-      this.nestMongoService.deleteNoteId(note.id).subscribe();
+      this.noteService.deleteNoteId(note.id).subscribe();
       return;
     }
-  }
-
-   async presentModal(note?: Note) {
-    const modalObj =  {
-      component: UpserNotePage,
-      showBackdrop: false,
-    };
-
-    if (note) {
-      // tslint:disable-next-line: no-string-literal
-      modalObj['componentProps'] = {note};
-    }
-    const modal = await this.modalController.create(modalObj);
-    await modal.present();
-    const {data} = await modal.onWillDismiss();
-    if (data) {
-      let foundEdit = false;
-      for (let index = 0; index < this.notes.length; index++) {
-        if (this.notes[index] === data) {
-          this.notes[index] = data;
-          this.nestMongoService.updateNote(data).subscribe(res => console.log(res + 'edit'));
-          foundEdit = true;
-          break;
-        }
-      }
-      if (!foundEdit) {
-        this.nestMongoService.postNotes(data).subscribe(t => {
-          console.log(t);
-          this.notes.push(t);
-        });
-      }
-    }
-  }
-
-  navigateToGeo() {
-    this.router.navigate(['geolocation']);
   }
 
   autoClose(slidingItem: IonItemSliding) {
