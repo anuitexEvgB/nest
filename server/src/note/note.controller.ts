@@ -20,6 +20,7 @@ export class NoteController {
     @Get()
     async getNotes(@Req() req) {
         const user = req.user;
+        console.log(user);
         return await this.noteService.getNotes(user.id);
     }
 

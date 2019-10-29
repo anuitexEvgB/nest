@@ -24,9 +24,22 @@ import { IonicStorageModule } from '@ionic/storage';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NestMongoService } from './services/note.service';
-import { UpserNotePage } from './pages/upser-note/upser-note.page';
 import { UploadImgNestService } from './services/upload-img-nest.service';
 
+import { Facebook } from '@ionic-native/facebook/ngx';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAuthModule } from '@angular/fire/auth';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyBTC3bPN4RtCWU42UzBLCOPol098BfbBo8',
+  authDomain: 'client-1570537507043.firebaseapp.com',
+  databaseURL: 'https://client-1570537507043.firebaseio.com',
+  projectId: 'client-1570537507043',
+  storageBucket: 'client-1570537507043.appspot.com',
+  messagingSenderId: '160010738906',
+  appId: '1:160010738906:web:c0d2ea54da1c72612699e3',
+  measurementId: 'G-PZMCN78RQN'
+};
 
 @NgModule({
   declarations: [AppComponent ],
@@ -38,6 +51,8 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     IonicStorageModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireAuthModule,
   ],
   providers: [
     UploadImgNestService,
@@ -55,7 +70,8 @@ import { UploadImgNestService } from './services/upload-img-nest.service';
     AndroidPermissions,
     NativeGeocoder,
     PhotoViewer,
-    GooglePlus
+    GooglePlus,
+    Facebook
   ],
   bootstrap: [AppComponent]
 })

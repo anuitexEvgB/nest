@@ -1,3 +1,4 @@
+import { Googlefb } from './../models/customAuth.model';
 import { JwtStrategy } from './jwt.strategy';
 import { Module } from '@nestjs/common';
 import { User } from '../models/user.model';
@@ -7,11 +8,10 @@ import { UsersService } from './users.service';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { GoogleStrategy } from './google.strategy';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([User, Googlefb]),
         PassportModule.register({
             defaultStrategy: 'jwt',
           }),
@@ -20,6 +20,6 @@ import { GoogleStrategy } from './google.strategy';
           }),
     ],
     controllers: [UsersController],
-    providers: [UsersService, AuthService, JwtStrategy, GoogleStrategy],
+    providers: [UsersService, AuthService, JwtStrategy],
 })
 export class UsersModule {}

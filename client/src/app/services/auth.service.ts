@@ -1,3 +1,4 @@
+import { CustomResponse } from './../models/custom-response.model';
 import { async } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -7,6 +8,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Storage } from '@ionic/storage';
 import { UserResponse } from './../models/user-response.model';
 import { User } from './../models/user.model';
+import { GoogleFB } from '../models/googleFB.model';
 
 
 @Injectable({
@@ -19,10 +21,29 @@ export class AuthService {
   AUTH_SERVER_ADDRESS = 'http://10.10.1.133:3000/users';
   authSubject  =  new  BehaviorSubject(false);
 
+  getUsers(): Observable<any[]> {
+    return this.http.get<any[]>(this.AUTH_SERVER_ADDRESS);
+  }
+
   register(user: User): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.AUTH_SERVER_ADDRESS}/register`, user).pipe(
       tap(async (res: UserResponse) => {
         if (res) {
+          console.log(res);
+          console.log(res.access_token);
+          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
+          await this.storage.set('USER_ID', res.user_id);
+          this.authSubject.next(true);
+        }
+      })
+    );
+  }
+
+  customReg(user: GoogleFB): Observable<CustomResponse> {
+    return this.http.post<CustomResponse>(`${this.AUTH_SERVER_ADDRESS}/customReg`, user).pipe(
+      tap(async (res: CustomResponse) => {
+        if (res) {
+          console.log(res);
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
           await this.storage.set('USER_ID', res.user_id);
           this.authSubject.next(true);
