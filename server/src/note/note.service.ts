@@ -1,9 +1,10 @@
 import { Photo } from './../models/photo.model';
 import { NoteDto } from './../DTO/note.dto';
-import { Injectable } from '@nestjs/common';
 import { Note } from '../models/note.model';
+
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ObjectID, getConnection } from 'typeorm';
+import { Repository, ObjectID } from 'typeorm';
 
 @Injectable()
 export class NoteService {
@@ -13,7 +14,7 @@ export class NoteService {
         @InjectRepository(Photo) private photoRepository: Repository<Photo>,
     ) { }
 
-    public async getNotes(id): Promise<Note[]> {
+    public async getNotes(id: ObjectID): Promise<Note[]> {
         const note = await this.noteRepository.find({
             where: {
                 userId: String(id),

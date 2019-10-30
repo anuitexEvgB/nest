@@ -1,3 +1,4 @@
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from './../../../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -9,17 +10,29 @@ import { Router } from '@angular/router';
 })
 export class RegisterPage implements OnInit {
 
+  form: FormGroup;
+
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
+    this.form = new FormGroup({
+      name: new FormControl('', [Validators.minLength(4), Validators.required]),
+      email: new FormControl('', [Validators.email, Validators.required]),
+      password: new FormControl('', [Validators.minLength(6), Validators.required])
+    });
   }
 
-  register(form) {
-    console.log(form);
-    this.authService.register(form.value).subscribe(res => {
-      console.log(res);
-      this.router.navigateByUrl('login');
-    });
+  register() {
+    if (this.form.valid) {
+      this.authService.register(this.form.value).subscribe(res => {
+        if (res === null) {
+          alert('Этот email уже используется');
+        } else {
+          this.form.reset();
+          this.router.navigate(['login']);
+        }
+      });
+    }
   }
 
 }

@@ -1,9 +1,8 @@
 import { CustomResponse } from './../models/custom-response.model';
-import { async } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Storage } from '@ionic/storage';
 import { UserResponse } from './../models/user-response.model';
@@ -19,24 +18,13 @@ export class AuthService {
   constructor(private http: HttpClient, private  storage: Storage) { }
 
   AUTH_SERVER_ADDRESS = 'http://10.10.1.133:3000/users';
-  authSubject  =  new  BehaviorSubject(false);
 
-  getUsers(): Observable<any[]> {
-    return this.http.get<any[]>(this.AUTH_SERVER_ADDRESS);
+  getUsers(email): Observable<any> {
+    return this.http.get(`${this.AUTH_SERVER_ADDRESS}/email`, email);
   }
 
   register(user: User): Observable<UserResponse> {
-    return this.http.post<UserResponse>(`${this.AUTH_SERVER_ADDRESS}/register`, user).pipe(
-      tap(async (res: UserResponse) => {
-        if (res) {
-          console.log(res);
-          console.log(res.access_token);
-          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
-          await this.storage.set('USER_ID', res.user_id);
-          this.authSubject.next(true);
-        }
-      })
-    );
+    return this.http.post<UserResponse>(`${this.AUTH_SERVER_ADDRESS}/register`, user);
   }
 
   customReg(user: GoogleFB): Observable<CustomResponse> {
@@ -46,7 +34,6 @@ export class AuthService {
           console.log(res);
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
           await this.storage.set('USER_ID', res.user_id);
-          this.authSubject.next(true);
         }
       })
     );
@@ -58,7 +45,6 @@ export class AuthService {
         if (res) {
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
           await this.storage.set('USER_ID', res.user_id);
-          this.authSubject.next(true);
         }
       })
     );
@@ -67,11 +53,6 @@ export class AuthService {
   async logout() {
     await this.storage.remove('ACCESS_TOKEN');
     await this.storage.remove('USER_ID');
-    this.authSubject.next(false);
-  }
-
-  isLoggedIn() {
-    return this.authSubject.asObservable();
   }
 
   public async getToken() {

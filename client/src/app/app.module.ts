@@ -1,6 +1,6 @@
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { InterceptorProvider } from './prodivers/interceptor';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -46,6 +46,7 @@ const firebaseConfig = {
   entryComponents: [],
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     BrowserModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),

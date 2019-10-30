@@ -4,7 +4,6 @@ export interface CustomResponse {
     status: number;
     user_id: string;
     _id?: string;
-    customId: string;
     name: string;
     email: string;
 }

@@ -1,17 +1,17 @@
-import { Googlefb } from './../models/customAuth.model';
 import { JwtStrategy } from './jwt.strategy';
-import { Module } from '@nestjs/common';
 import { User } from '../models/user.model';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthService } from './auth/auth.service';
+
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User, Googlefb]),
+        TypeOrmModule.forFeature([User]),
         PassportModule.register({
             defaultStrategy: 'jwt',
           }),

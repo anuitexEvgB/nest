@@ -1,4 +1,4 @@
-import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Note } from 'src/app/models/note.model';
@@ -14,17 +14,11 @@ import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  Marker,
   GoogleMapsAnimation,
   MyLocation,
   GoogleMapOptions,
   LatLng
 } from '@ionic-native/google-maps';
-import {
-  NativeGeocoder,
-  NativeGeocoderOptions,
-  NativeGeocoderResult,
-} from '@ionic-native/native-geocoder/ngx';
 import { NestMongoService } from 'src/app/services/note.service';
 import { Geo } from 'src/app/models/geo.model';
 
@@ -58,7 +52,6 @@ export class UpserNotePage implements OnInit {
     public photoViewer: PhotoViewer,
     public toastCtrl: ToastController,
     public platform: Platform,
-    public nativeGeocoder: NativeGeocoder,
     public router: Router,
     private storage: Storage,
     private route: ActivatedRoute,

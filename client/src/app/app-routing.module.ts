@@ -7,15 +7,6 @@ const routes: Routes = [
   { path: 'upser-note', loadChildren: './pages/upser-note/upser-note.module#UpserNotePageModule' },
   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
   { path: 'geolocation', loadChildren: './pages/geolocation/geolocation.module#GeolocationPageModule' },
-  // {
-  //   path: 'upsert-note/:id',
-  //   resolve: {
-  //     special: ResolverService
-  //   },
-  //   loadChildren: './pages/upser-note/upser-note.module#UpserNotePageModule',
-  //  },
-  //  { path: 'login', loadChildren: './pages/auth/login/login.module#LoginPageModule' },
-  //  { path: 'home', loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)},
   { path: 'register', loadChildren: './pages/auth/register/register.module#RegisterPageModule' },
 ];
 

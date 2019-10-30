@@ -14,14 +14,6 @@ export class UploadImgNestService {
     const data = new FormData();
     data.append('file', files);
     return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data);
-
-    // console.log(files);
-    // const data = new FormData();
-    // // tslint:disable-next-line: prefer-for-of
-    // for (let i = 0; i < files.length; i++) {
-    //   data.append('file', files[i], files[i].name);
-    // }
-    // return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data);
   }
 
   getPhoto(): Observable<Photo[]> {
@@ -47,9 +39,4 @@ export class UploadImgNestService {
     console.log(lol);
     return lol;
   }
-
-  // addIdNote(id: string): Observable<any> {
-  //   return this.httpClient.put<any>(`http://10.10.1.133:3000/note/deletePhotos/${id}`);
-  // }
-
 }

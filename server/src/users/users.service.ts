@@ -1,16 +1,14 @@
-import { Googlefb } from './../models/customAuth.model';
+import { CustomLoginDto } from './../DTO/customAuth.dto';
 import { User } from './../models/user.model';
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private UserRepository: Repository<User>) { }
 
-    async getAll() {
-        return await this.UserRepository.find();
-    }
+    constructor(@InjectRepository(User) private UserRepository: Repository<User>) { }
 
     async findByEmail(email: string): Promise<User> {
         return await this.UserRepository.findOne({
@@ -26,10 +24,20 @@ export class UsersService {
     }
 
     async create(user: User): Promise<User> {
-        return await this.UserRepository.save(user);
+        return this.findByEmail(user.email).then(async res => {
+            if (!res) {
+                return await this.UserRepository.save(user);
+            }
+            return;
+        });
     }
 
-    async customCreate(user: Googlefb): Promise<Googlefb> {
-        return await this.UserRepository.save(user);
+    async customCreate(user: CustomLoginDto): Promise<CustomLoginDto> {
+        return this.findByEmail(user.email).then(async res => {
+            if (!res) {
+                return await this.UserRepository.save(user);
+            }
+            return res;
+        });
     }
 }

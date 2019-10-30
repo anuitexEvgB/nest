@@ -1,51 +1,27 @@
+import { CustomLoginDto } from './../DTO/customAuth.dto';
 import { User } from './../models/user.model';
 import { AuthService } from './auth/auth.service';
-import { Controller, Post, Body, Get, UseGuards, Req, Res } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Googlefb } from '../models/customAuth.model';
+
+import { Controller, Post, Body } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly authService: AuthService) {}
-
-    @Get()
-    async getUsers() {
-        return this.authService.getUsers();
-    }
+    constructor(
+        private readonly authService: AuthService,
+        ) {}
 
     @Post('login')
-    async login(@Body() user: User): Promise<any> {
+    async login(@Body() user: User): Promise<User | { status: number }> {
         return this.authService.login(user);
     }
 
     @Post('register')
-    async register(@Body() user: User): Promise<any> {
+    async register(@Body() user: User): Promise<User> {
         return this.authService.register(user);
     }
 
     @Post('customReg')
-    async customCreate(@Body() user: Googlefb): Promise<any> {
+    async customCreate(@Body() user: CustomLoginDto): Promise<CustomLoginDto> {
         return this.authService.customReg(user);
     }
-
-    // @Get('google')
-    // @UseGuards(AuthGuard('google'))
-    // googleLogin()
-    // {
-    //     console.log('asdasd');
-    //     // initiates the Google OAuth2 login flow
-    // }
-
-    // @Get('google/callback')
-    // @UseGuards(AuthGuard('google'))
-    // googleLoginCallback(@Req() req, @Res() res)
-    // {
-    //     // handles the Google OAuth2 callback
-    //     const jwt: string = req.user.jwt;
-    //     if (jwt) {
-    //         res.redirect('http://localhost:8100/login/succes/' + jwt);
-    //     } else {
-    //         res.redirect('http://localhost:8100/login/failure');
-    //     }
-    // }
 }

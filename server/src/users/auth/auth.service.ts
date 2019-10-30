@@ -1,7 +1,7 @@
-import { Googlefb } from './../../models/customAuth.model';
-import { ObjectID } from 'typeorm';
+import { CustomLoginDto } from './../../DTO/customAuth.dto';
 import { UsersService } from './../users.service';
 import { User } from './../../models/user.model';
+
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
@@ -11,7 +11,7 @@ export class AuthService {
     constructor(
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService,
-    ) {}
+    ) { }
 
     private async validate(userData: User): Promise<User> {
         return await this.usersService.findByEmail(userData.email);
@@ -21,18 +21,14 @@ export class AuthService {
         return await this.usersService.findById(id);
     }
 
-    public async getUsers() {
-        return await this.usersService.getAll();
-    }
-
-    public async login(user: User): Promise<any | {status: number}> {
+    public async login(user: User): Promise<User | { status: number }> {
         return this.validate(user).then(userData => {
             user.password = crypto.createHmac('sha256', user.password).digest('hex');
             if (!userData) {
-                return {status: 404};
+                return { status: 404 };
             }
             if (userData.password !== user.password) {
-                return {status: 404};
+                return { status: 404 };
             }
             const payload = `${userData.id}`;
             const accessToken = this.jwtService.sign(payload);
@@ -46,24 +42,24 @@ export class AuthService {
         });
     }
 
-    async validateUser(useremail: string, pass: string): Promise<any> {
-        const user = await this.usersService.findByEmail(useremail);
-        if (user && user.password === pass) {
-          const { password, ...result } = user;
-          return result;
-        }
-        return null;
-      }
+    // async validateUser(useremail: string, pass: string): Promise<any> {
+    //     const user = await this.usersService.findByEmail(useremail);
+    //     if (user && user.password === pass) {
+    //         const { password, ...result } = user;
+    //         return result;
+    //     }
+    //     return null;
+    // }
 
-    public async register(user: User): Promise<any> {
+    public async register(user: User): Promise<User> {
         user.password = crypto.createHmac('sha256', user.password).digest('hex');
         return this.usersService.create(user);
     }
 
-    public async customReg(user: Googlefb): Promise<any> {
+    public async customReg(user: CustomLoginDto): Promise<any> {
         return this.usersService.customCreate(user).then(userData => {
             if (!userData) {
-                return {status: 404};
+                return { status: 404 };
             }
             const payload = `${userData.id}`;
             const accessToken = this.jwtService.sign(payload);
@@ -73,8 +69,7 @@ export class AuthService {
                 access_token: accessToken,
                 user_id: userData.id,
                 status: 200,
-                _id:  userData.id,
-                customId: userData.customId,
+                _id: userData.id,
                 name: userData.name,
                 email: userData.email,
             };

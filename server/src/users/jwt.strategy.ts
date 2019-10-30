@@ -12,24 +12,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: 'aye228',
     });
   }
-
-  // async validate(payload: any) {
-  //   console.log(payload);
-  //   return { userId: payload.sub, username: payload.username };
-  // }
-  public async validate(payload) {
+  public async validate(payload: string) {
     const user = await this.authService.getUserById(payload);
     if (!user) {
-        throw new UnauthorizedException();
+      throw new UnauthorizedException();
     }
     return user;
-}
-
-  // async validate(useremail: string, password: string): Promise<any> {
-  //   const user = await this.authService.validateUser(useremail, password);
-  //   if (!user) {
-  //     throw new UnauthorizedException();
-  //   }
-  //   return user;
-  // }
+  }
 }

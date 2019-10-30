@@ -1,11 +1,12 @@
 import { PhotoService } from './photo/photo.service';
 import { NoteDto } from './../DTO/note.dto';
-import { ObjectID } from 'typeorm';
-import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { NoteService } from './note.service';
 import { Note } from '../models/note.model';
 import { MulterOptions } from '../LoadConfg/multer-config';
+
+import { ObjectID } from 'typeorm';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('note')
@@ -18,9 +19,8 @@ export class NoteController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    async getNotes(@Req() req) {
+    async getNotes(@Req() req: any) {
         const user = req.user;
-        console.log(user);
         return await this.noteService.getNotes(user.id);
     }
 
@@ -52,6 +52,8 @@ export class NoteController {
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
     async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res) {
+        console.log(res, 'FOOOOOUR');
+        console.log(typeof(res));
         const result = await this.photoService.addPhotoToNote(id, photo);
         res.status(HttpStatus.OK).json({ result });
 
@@ -66,6 +68,8 @@ export class NoteController {
     @UseGuards(AuthGuard('jwt'))
     @Post('deletePhotos/:photoId')
     async deletePhoto(@Param('photoId') id: string, @Body() namePhoto: any) {
+        console.log(namePhoto, 'THRRREEEEEE');
+        console.log(typeof(namePhoto));
         return await this.photoService.deletePhoto(id, namePhoto);
     }
 }
