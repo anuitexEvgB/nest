@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { UpserNotePage } from './upser-note.page';
+
+import { UpserNotePage } from 'src/app/pages/upser-note/upser-note.page';
 
 const routes: Routes = [
   {

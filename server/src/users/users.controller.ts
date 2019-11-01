@@ -1,6 +1,6 @@
-import { CustomLoginDto } from './../DTO/customAuth.dto';
+import { CustomLoginDto } from '../dto/custom-auth.dto';
 import { User } from './../models/user.model';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from '../shared/auth.service';
 
 import { Controller, Post, Body } from '@nestjs/common';
 

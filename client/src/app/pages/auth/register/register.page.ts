@@ -1,7 +1,8 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthService } from './../../../services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+
+import { AuthService } from 'src/app/services';
 
 @Component({
   selector: 'app-register',
@@ -10,9 +11,12 @@ import { Router } from '@angular/router';
 })
 export class RegisterPage implements OnInit {
 
-  form: FormGroup;
+  public form: FormGroup;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router
+    ) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -22,11 +26,12 @@ export class RegisterPage implements OnInit {
     });
   }
 
-  register() {
+  public register() {
+    debugger;
     if (this.form.valid) {
       this.authService.register(this.form.value).subscribe(res => {
         if (res === null) {
-          alert('Этот email уже используется');
+          alert('This email already exist');
         } else {
           this.form.reset();
           this.router.navigate(['login']);
@@ -34,5 +39,4 @@ export class RegisterPage implements OnInit {
       });
     }
   }
-
 }

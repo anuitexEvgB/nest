@@ -9,6 +9,7 @@ import {
 } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,7 @@ export class InterceptorProvider implements HttpInterceptor {
     private authService: AuthService
     ) {}
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return from(this.authService.getToken()).pipe(mergeMap((token) => {
       const changedReq = request.clone({
           setHeaders: {

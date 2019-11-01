@@ -1,9 +1,9 @@
-import { AuthService } from './../../services/auth.service';
-import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IonItemSliding, ModalController } from '@ionic/angular';
+
 import { Note } from 'src/app/models/note.model';
-import { NestMongoService } from 'src/app/services/note.service';
+import { AuthService, NestMongoService } from 'src/app/services';
 
 @Component({
   selector: 'app-home',
@@ -11,15 +11,14 @@ import { NestMongoService } from 'src/app/services/note.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  notes: Note[];
-  ha: any[];
+
+  public notes: Note[];
 
   constructor(
     public modalController: ModalController,
     private noteService: NestMongoService,
     private router: Router,
-    private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
     ) {
       this.noteService.noteSubject.subscribe((res) => {
         this.notes.push(res);
@@ -30,38 +29,38 @@ export class HomePage implements OnInit {
     this.getAll();
   }
 
-  doRefresh(event) {
+  public doRefresh(event: { target: { complete: () => void; }; }) {
     this.getAll();
     event.target.complete();
   }
 
-  getAll() {
+  private getAll() {
     this.noteService.getNotes()
     .subscribe(response => {
       this.notes = response;
     });
   }
 
-  async logout() {
+  public async logout() {
     await this.authService.logout();
     await this.router.navigateByUrl('login');
   }
 
-  add() {
+  public add() {
     this.router.navigate(['upser-note']);
   }
 
-  async edit(note: Note) {
+  public edit(note: Note) {
     this.noteService.selectedNote = note;
-    let navigationExtras: NavigationExtras = {
+    const navigationExtras: NavigationExtras = {
       queryParams: {
        edit: true,
       }
     };
-    await this.router.navigate(['upser-note'], navigationExtras);
+    this.router.navigate(['upser-note'], navigationExtras);
   }
 
-  delete(note: Note) {
+  public delete(note: Note) {
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);
@@ -70,7 +69,7 @@ export class HomePage implements OnInit {
     }
   }
 
-  autoClose(slidingItem: IonItemSliding) {
+  public autoClose(slidingItem: IonItemSliding) {
     slidingItem.close();
   }
 }

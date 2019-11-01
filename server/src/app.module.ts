@@ -1,15 +1,19 @@
+// Vendors
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+// Component
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { NoteService } from './note/note.service';
 import { NoteController } from './note/note.controller';
-import { Note } from './models/note.model';
-import { PhotoService } from './note/photo/photo.service';
-import { Photo } from './models/photo.model';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users';
+
+// Service
+import { NoteService, PhotoService } from './shared';
+import { AppService } from './app.service';
+
+// Models
+import { Note, Photo } from './models';
 
 @Module({
   imports: [

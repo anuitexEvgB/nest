@@ -1,10 +1,10 @@
-import { Photo } from './../models/photo.model';
-import { NoteDto } from './../DTO/note.dto';
-import { Note } from '../models/note.model';
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID } from 'typeorm';
+
+import { Photo } from './../models/photo.model';
+import { NoteDto } from '../dto/note.dto';
+import { Note } from '../models/note.model';
 
 @Injectable()
 export class NoteService {
@@ -23,11 +23,7 @@ export class NoteService {
         return note;
     }
 
-    async getNote(id: ObjectID): Promise<Note | undefined> {
-        return await this.noteRepository.findOne(id);
-    }
-
-    async addNote(note: NoteDto): Promise<Note> {
+    public async addNote(note: NoteDto): Promise<Note> {
         const savedNote = await this.noteRepository.save(note);
         // save images
         const images = savedNote.photos;
@@ -43,11 +39,11 @@ export class NoteService {
         return savedNote;
     }
 
-    async updateNote(id: ObjectID, note: Note) {
+    public async updateNote(id: ObjectID, note: Note) {
         return await this.noteRepository.update(id, note);
     }
 
-    async deleteNoteId(id: string) {
+    public async deleteNoteId(id: string) {
         const res = await this.noteRepository.delete(id);
         if (res) {
             const photos = await this.photoRepository.find({
@@ -57,8 +53,7 @@ export class NoteService {
                 const name = a.photo;
                 const fs = require('fs');
                 const file = 'uploads/';
-                // tslint:disable-next-line: only-arrow-functions
-                fs.unlink(file + name, function(err) {
+                fs.unlink(file + name, (err) => {
                     // tslint:disable-next-line: no-console
                     console.error(err, ' Eror unlinka');
                 });

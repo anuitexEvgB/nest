@@ -1,42 +1,45 @@
-import { Photo } from './../models/photo.model';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import { Photo } from 'src/app/models';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadImgNestService {
+  private api = environment.api;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    ) { }
 
-  uploadFile(files: any, id: number): Observable<any> {
+  public uploadFile(files: any, id: number): Observable<any> {
     const data = new FormData();
     data.append('file', files);
-    return this.httpClient.post<any[]>(`http://10.10.1.133:3000/note/upload/${id}`, data);
+    return this.httpClient.post<any[]>(`${this.api}/note/upload/${id}`, data);
   }
 
-  getPhoto(): Observable<Photo[]> {
-    return this.httpClient.get<Photo[]>('http://10.10.1.133:3000/note/getPhotos');
+  public getPhoto(): Observable<Photo[]> {
+    return this.httpClient.get<Photo[]>(`${this.api}/note/getPhotos`);
   }
 
-  getPhotoById(id: number): Observable<any[]> {
-    return this.httpClient.get<any[]>(`http://10.10.1.133:3000/note/getPhotos/${id}`);
+  public getPhotoById(id: number): Observable<any[]> {
+    return this.httpClient.get<any[]>(`${this.api}/note/getPhotos/${id}`);
   }
 
-  deletePhoto(id: string, namePhoto: any): Observable<any> {
-    return this.httpClient.post<any>(`http://10.10.1.133:3000/note/deletePhotos/${id}`, {
+  public deletePhoto(id: string, namePhoto: any): Observable<any> {
+    return this.httpClient.post<any>(`${this.api}/note/deletePhotos/${id}`, {
       namePhoto
     });
   }
 
-  deleteNotePhotos(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`http://10.10.1.133:3000/note/deletePhotos/${id}`);
+  public deleteNotePhotos(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.api}/note/deletePhotos/${id}`);
   }
 
-  addNameForDeletePhoto(namePhoto: any[]): Observable<any[]> {
-    const lol = this.httpClient.post<any[]>('http://10.10.1.133:3000/note', namePhoto);
-    console.log(lol);
-    return lol;
+  public addNameForDeletePhoto(namePhoto: any[]): Observable<any[]> {
+    return this.httpClient.post<any[]>(`${this.api}`, namePhoto);
   }
 }

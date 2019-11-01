@@ -6,7 +6,6 @@ const routes: Routes = [
   { path: 'login', loadChildren: () => import('./pages/auth/login/login.module').then( m => m.LoginPageModule)},
   { path: 'upser-note', loadChildren: './pages/upser-note/upser-note.module#UpserNotePageModule' },
   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
-  { path: 'geolocation', loadChildren: './pages/geolocation/geolocation.module#GeolocationPageModule' },
   { path: 'register', loadChildren: './pages/auth/register/register.module#RegisterPageModule' },
 ];
 

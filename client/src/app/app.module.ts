@@ -1,11 +1,9 @@
-import { GooglePlus } from '@ionic-native/google-plus/ngx';
-import { InterceptorProvider } from './prodivers/interceptor';
+// Vendors
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -14,21 +12,25 @@ import { File } from '@ionic-native/file/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
-
 import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { Facebook } from '@ionic-native/facebook/ngx';
+import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { IonicStorageModule } from '@ionic/storage';
-
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
-import { NestMongoService } from './services/note.service';
-import { UploadImgNestService } from './services/upload-img-nest.service';
-
-import { Facebook } from '@ionic-native/facebook/ngx';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+
+// Component
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+
+// Provider
+import { InterceptorProvider } from './prodivers/interceptor';
+
+// Service
+import { NestMongoService, UploadImgNestService } from './services';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTC3bPN4RtCWU42UzBLCOPol098BfbBo8',

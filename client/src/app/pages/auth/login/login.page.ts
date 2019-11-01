@@ -1,11 +1,12 @@
 import { Router } from '@angular/router';
-import { AuthService } from './../../../services/auth.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { LoadingController } from '@ionic/angular';
 import { Facebook } from '@ionic-native/facebook/ngx';
+
+import { AuthService } from 'src/app/services';
 import { GoogleFB } from 'src/app/models/googleFB.model';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -14,15 +15,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class LoginPage implements OnInit {
 
-  isLoggedIn: boolean;
-  userData: GoogleFB;
-  form: FormGroup;
+  private form: FormGroup;
+  private userData: GoogleFB;
 
   constructor(
-    private authService: AuthService,
+    public loadingCtrl: LoadingController,
+    public authService: AuthService,
     private router: Router,
     private googlePlus: GooglePlus,
-    public loadingCtrl: LoadingController,
     private fb: Facebook,
     ) {}
 
@@ -33,8 +33,9 @@ export class LoginPage implements OnInit {
     });
   }
 
-  login() {
+  public login() {
     if (this.form.valid) {
+      console.log(this.form);
       this.authService.login(this.form.value).subscribe(res => {
         if (res.status === 200) {
           this.form.reset();
@@ -46,7 +47,7 @@ export class LoginPage implements OnInit {
     }
   }
 
-  async nativeGoogleLogin(): Promise<any> {
+  public async nativeGoogleLogin(): Promise<any> {
     try {
       const loading = await this.loadingCtrl.create({
         message: 'Please wait...',
@@ -72,7 +73,7 @@ export class LoginPage implements OnInit {
   }
 
 
-  async fbLogin() {
+  public async fbLogin() {
     const loading = await this.loadingCtrl.create({
       message: 'Please wait...'
       });
@@ -86,7 +87,7 @@ export class LoginPage implements OnInit {
           name: user.name,
           email: user.email
         };
-        this.authService.customReg(this.userData).subscribe(_ => {
+        this.authService.customReg(this.userData).subscribe((res) => {
           this.router.navigate(['home']);
         });
         loading.dismiss();
@@ -96,7 +97,7 @@ export class LoginPage implements OnInit {
       loading.dismiss();
     });
 }
-  async presentLoading(loading: HTMLIonLoadingElement) {
+  private async presentLoading(loading: HTMLIonLoadingElement) {
     return await loading.present();
   }
 }

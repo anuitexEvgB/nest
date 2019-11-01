@@ -1,13 +1,12 @@
-import { PhotoService } from './photo/photo.service';
-import { NoteDto } from './../DTO/note.dto';
-import { NoteService } from './note.service';
-import { Note } from '../models/note.model';
-import { MulterOptions } from '../LoadConfg/multer-config';
-
 import { ObjectID } from 'typeorm';
 import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UploadedFiles, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
+
+import { PhotoService, NoteService } from '../shared';
+import { NoteDto } from '../dto/note.dto';
+import { Note } from '../models/note.model';
+import { MulterOptions } from '../middleware/multer-config';
 
 @Controller('note')
 export class NoteController {

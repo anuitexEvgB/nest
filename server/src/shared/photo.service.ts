@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID } from 'typeorm';
 
-import { Photo } from '../../models/photo.model';
+import { Photo } from '../models/photo.model';
 
 @Injectable()
 export class PhotoService {
@@ -10,7 +10,7 @@ export class PhotoService {
         @InjectRepository(Photo) private photoRepository: Repository<Photo>,
         ) {}
 
-    async addPhotoToNote(id: ObjectID, photo: Photo) {
+    public async addPhotoToNote(id: ObjectID, photo: Photo) {
         const photoToSave = {
             noteId: id,
             photo: photo[0].filename,
@@ -19,16 +19,16 @@ export class PhotoService {
         return res;
     }
 
-    async getPhotoToNote(): Promise<Photo[]> {
+    public async getPhotoToNote(): Promise<Photo[]> {
         const res = await this.photoRepository.find();
         return res;
     }
 
-    async getPhotoToNoteById(id: ObjectID): Promise<Photo | undefined> {
+    public async getPhotoToNoteById(id: ObjectID): Promise<Photo | undefined> {
         return await this.photoRepository.findOne(id);
     }
 
-    async deletePhoto(id: string, namePhoto) {
+    public async deletePhoto(id: string, namePhoto) {
         const name = namePhoto.namePhoto;
         const fs = require('fs');
         const file = 'uploads/';

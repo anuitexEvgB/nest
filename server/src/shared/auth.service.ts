@@ -1,10 +1,16 @@
-import { CustomLoginDto } from './../../DTO/customAuth.dto';
-import { UsersService } from './../users.service';
-import { User } from './../../models/user.model';
-
+// Vendors
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+
+// Dtos
+import { CustomLoginDto } from '../dto/custom-auth.dto';
+
+// Models
+import { User } from '../models/user.model';
+
+// Services
+import { UsersService } from './users.service';
 
 @Injectable()
 export class AuthService {
@@ -41,15 +47,6 @@ export class AuthService {
             };
         });
     }
-
-    // async validateUser(useremail: string, pass: string): Promise<any> {
-    //     const user = await this.usersService.findByEmail(useremail);
-    //     if (user && user.password === pass) {
-    //         const { password, ...result } = user;
-    //         return result;
-    //     }
-    //     return null;
-    // }
 
     public async register(user: User): Promise<User> {
         user.password = crypto.createHmac('sha256', user.password).digest('hex');
