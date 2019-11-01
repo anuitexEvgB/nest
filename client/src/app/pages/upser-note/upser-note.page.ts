@@ -50,7 +50,6 @@ export class UpserNotePage implements OnInit {
     private route: ActivatedRoute,
     private noteService: NestMongoService,
   ) {
-    this.uploadPhoto();
   }
 
   ngOnInit() {
@@ -75,6 +74,7 @@ export class UpserNotePage implements OnInit {
     });
     this.platform.ready();
     this.loadMap();
+    this.uploadPhoto();
   }
 
   public async close() {
@@ -110,9 +110,10 @@ export class UpserNotePage implements OnInit {
       this.map.animateCamera({
         target: this.note.latLng,
         zoom: 17,
+        duration: 1000,
       });
       const nextMarker = this.map.addMarkerSync({
-        title: 'Ты тут',
+        title: 'Your marker',
         icon: 'blue',
         animation: GoogleMapsAnimation.BOUNCE,
         position: this.note.latLng,
@@ -123,13 +124,12 @@ export class UpserNotePage implements OnInit {
       this.map.clear();
 
       const geo: LatLng = params[0];
-      console.log(geo);
       this.note.latLng.lat = geo.lat;
       this.note.latLng.lng = geo.lng;
       this.map.addMarkerSync({
         position: this.note.latLng,
         target: this.note.latLng,
-        title: 'Ты тут',
+        title: 'Your marker',
         animation: GoogleMapsAnimation.BOUNCE,
       });
     });
@@ -143,7 +143,7 @@ export class UpserNotePage implements OnInit {
         zoom: 17
       });
       const marker = this.map.addMarkerSync({
-        title: 'url',
+        title: 'Your marker',
         position: this.note.latLng,
         animation: GoogleMapsAnimation.BOUNCE,
       });
@@ -156,9 +156,9 @@ export class UpserNotePage implements OnInit {
   }
 
   uploadPhoto() {
-    // I ETO
-    this.uploadImgNestService.getPhoto()
+    this.uploadImgNestService.getPhoto(this.note.id)
       .subscribe(res => {
+        console.log(res);
         res.forEach(element => {
           if (element.noteId === this.note.id) {
             const path = `${this.api}/uploads/${element.photo}`;
@@ -192,7 +192,6 @@ export class UpserNotePage implements OnInit {
 
     this.camera.getPicture(options).then(img => {
       const blob = this.getBlob(img, 'image/jpeg');
-      console.log(blob);
       this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(res => {
         const path = `${this.api}/uploads/${res.result.photo}`;
         this.photos.unshift({
@@ -218,7 +217,6 @@ export class UpserNotePage implements OnInit {
       const blob = this.getBlob(img, 'image/jpeg');
       this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
         const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
-        console.log(res.result.id);
         this.photos.unshift({
           id: res.result.id,
           photo: path,

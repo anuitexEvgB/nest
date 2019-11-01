@@ -61,7 +61,6 @@ export class HomePage implements OnInit {
   }
 
   public delete(note: Note) {
-    debugger;
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);

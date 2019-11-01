@@ -30,9 +30,9 @@ export class NoteController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get('getPhotos')
-    async getPhotos() {
-        return await this.photoService.getPhotoToNote();
+    @Get('getPhotos/:id')
+    async getPhotos(@Param('id') id: number) {
+        return await this.photoService.getPhotoToNote(id);
     }
 
     @UseGuards(AuthGuard('jwt'))
@@ -54,12 +54,6 @@ export class NoteController {
         const result = await this.photoService.addPhotoToNote(id, photo);
         res.status(HttpStatus.OK).json({ result });
 
-    }
-
-    @UseGuards(AuthGuard('jwt'))
-    @Get('getPhotos/:id')
-    async getPhoto(@Param('id') id: ObjectID) {
-        return await this.photoService.getPhotoToNoteById(id);
     }
 
     @UseGuards(AuthGuard('jwt'))

@@ -21,12 +21,8 @@ export class UploadImgNestService {
     return this.httpClient.post<any[]>(`${this.api}/note/upload/${id}`, data);
   }
 
-  public getPhoto(): Observable<Photo[]> {
-    return this.httpClient.get<Photo[]>(`${this.api}/note/getPhotos`);
-  }
-
-  public getPhotoById(id: number): Observable<any[]> {
-    return this.httpClient.get<any[]>(`${this.api}/note/getPhotos/${id}`);
+  public getPhoto(id: number): Observable<Photo[]> {
+    return this.httpClient.get<Photo[]>(`${this.api}/note/getPhotos/${id}`);
   }
 
   public deletePhoto(id: string, namePhoto: any): Observable<any> {
