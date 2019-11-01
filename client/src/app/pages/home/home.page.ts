@@ -29,16 +29,16 @@ export class HomePage implements OnInit {
     this.getAll();
   }
 
-  public doRefresh(event: { target: { complete: () => void; }; }) {
-    this.getAll();
-    event.target.complete();
-  }
-
   private getAll() {
     this.noteService.getNotes()
     .subscribe(response => {
       this.notes = response;
     });
+  }
+
+  public doRefresh(event: { target: { complete: () => void; }; }) {
+    this.getAll();
+    event.target.complete();
   }
 
   public async logout() {
@@ -61,6 +61,7 @@ export class HomePage implements OnInit {
   }
 
   public delete(note: Note) {
+    debugger;
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);

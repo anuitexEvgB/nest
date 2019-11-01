@@ -17,7 +17,7 @@ import {
 } from '@ionic-native/google-maps';
 
 // Models
-import { Note } from 'src/app/models';
+import { Note, PhotoEn } from 'src/app/models';
 
 // Service
 import { UploadImgNestService, NestMongoService } from 'src/app/services';
@@ -33,15 +33,12 @@ import * as enviroment from 'src/environments/environment';
 export class UpserNotePage implements OnInit {
   public note: Note;
   public checked = false;
-  public photos = [];
+  public photos: PhotoEn[] = [];
   private map: GoogleMap;
   private editMode: boolean = !!this.route.snapshot.queryParams.edit;
   private api = enviroment.environment.api;
 
   constructor(
-    private storage: Storage,
-    private route: ActivatedRoute,
-    private noteService: NestMongoService,
     public modalController: ModalController,
     public camera: Camera,
     public uploadImgNestService: UploadImgNestService,
@@ -49,6 +46,9 @@ export class UpserNotePage implements OnInit {
     public toastCtrl: ToastController,
     public platform: Platform,
     public router: Router,
+    private storage: Storage,
+    private route: ActivatedRoute,
+    private noteService: NestMongoService,
   ) {
     this.uploadPhoto();
   }
@@ -80,9 +80,10 @@ export class UpserNotePage implements OnInit {
   public async close() {
     this.router.navigate(['home']);
     const undef = this.note.photos;
-    await undef.forEach((del: { noteId: string; _id: string; photo: any; }) => {
+    await undef.forEach((del: { noteId: string; id: string; photo: any; }) => {
       if (del.noteId === 'undefined') {
-        this.uploadImgNestService.deletePhoto(del._id, del.photo).subscribe();
+        console.log(del);
+        this.uploadImgNestService.deletePhoto(del.id, del.photo).subscribe();
       }
     });
   }
@@ -142,7 +143,7 @@ export class UpserNotePage implements OnInit {
         zoom: 17
       });
       const marker = this.map.addMarkerSync({
-        title: 'Here',
+        title: 'url',
         position: this.note.latLng,
         animation: GoogleMapsAnimation.BOUNCE,
       });
@@ -161,27 +162,22 @@ export class UpserNotePage implements OnInit {
         res.forEach(element => {
           if (element.noteId === this.note.id) {
             const path = `${this.api}/uploads/${element.photo}`;
-            this.photos.unshift(path);
+            this.photos.unshift({
+              id: element._id,
+              photo: path,
+              namePhoto: element.photo
+            });
           }
         });
       });
   }
 
-  public deleteFile(photo: string) {
-    //PEREDELAT' const a = this.photos.splice(index, 1);
-    // i otpravit'
+  public deleteFile(photo: PhotoEn) {
     const index = this.photos.indexOf(photo);
     if (index > -1) {
-      this.photos.splice(index, 1);
+      const del = this.photos.splice(index, 1);
+      this.uploadImgNestService.deletePhoto(del[0].id, del[0].namePhoto).subscribe();
     }
-    this.uploadImgNestService.getPhoto()
-      .subscribe(res => {
-        res.forEach(el => {
-          if (photo.indexOf(el.photo) > -1) {
-            this.uploadImgNestService.deletePhoto(el._id, el.photo).subscribe();
-          }
-        });
-      });
   }
 
   public async addPhoto() {
@@ -198,8 +194,12 @@ export class UpserNotePage implements OnInit {
       const blob = this.getBlob(img, 'image/jpeg');
       console.log(blob);
       this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(res => {
-        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
-        this.photos.unshift(path);
+        const path = `${this.api}/uploads/${res.result.photo}`;
+        this.photos.unshift({
+          id: res.result.id,
+          photo: path,
+          namePhoto: res.result.photo,
+        });
         this.note.photos.push(res.result);
       });
     });
@@ -218,7 +218,13 @@ export class UpserNotePage implements OnInit {
       const blob = this.getBlob(img, 'image/jpeg');
       this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
         const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
-        this.photos.unshift(path);
+        console.log(res.result.id);
+        this.photos.unshift({
+          id: res.result.id,
+          photo: path,
+          namePhoto: res.result.photo
+        });
+        console.log(this.photos);
         this.note.photos.push(res.result);
       });
     });

@@ -37,8 +37,8 @@ export class LoginPage implements OnInit {
     if (this.form.valid) {
       console.log(this.form);
       this.authService.login(this.form.value).subscribe(res => {
+        this.form.reset();
         if (res.status === 200) {
-          this.form.reset();
           this.router.navigate(['home']);
         } else if (res.status === 404) {
           alert('Wrong email or password');
@@ -62,7 +62,7 @@ export class LoginPage implements OnInit {
         name: gplus.displayName,
         email: gplus.email,
       };
-      this.authService.customReg(userData).subscribe(_ => {
+      this.authService.socialLogin(userData).subscribe(_ => {
         this.router.navigate(['home']);
       });
       loading.dismiss();
@@ -87,7 +87,7 @@ export class LoginPage implements OnInit {
           name: user.name,
           email: user.email
         };
-        this.authService.customReg(this.userData).subscribe((res) => {
+        this.authService.socialLogin(this.userData).subscribe((res) => {
           this.router.navigate(['home']);
         });
         loading.dismiss();

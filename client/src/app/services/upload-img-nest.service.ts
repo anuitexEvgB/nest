@@ -34,12 +34,4 @@ export class UploadImgNestService {
       namePhoto
     });
   }
-
-  public deleteNotePhotos(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.api}/note/deletePhotos/${id}`);
-  }
-
-  public addNameForDeletePhoto(namePhoto: any[]): Observable<any[]> {
-    return this.httpClient.post<any[]>(`${this.api}`, namePhoto);
-  }
 }

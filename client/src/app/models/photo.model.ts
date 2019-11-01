@@ -3,3 +3,9 @@ export interface Photo {
     noteId: number;
     photo: string;
 }
+
+export interface PhotoEn {
+    id?: string;
+    photo: string;
+    namePhoto: string;
+}

@@ -28,7 +28,7 @@ export class PhotoService {
         return await this.photoRepository.findOne(id);
     }
 
-    public async deletePhoto(id: string, namePhoto) {
+    public async deletePhoto(id: string, namePhoto: {namePhoto: string}) {
         const name = namePhoto.namePhoto;
         const fs = require('fs');
         const file = 'uploads/';

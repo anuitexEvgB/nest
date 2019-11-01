@@ -23,14 +23,14 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 // Component
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from 'src/app/app.component';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 // Provider
-import { InterceptorProvider } from './prodivers/interceptor';
+import { InterceptorProvider } from 'src/app/prodivers/interceptor';
 
 // Service
-import { NestMongoService, UploadImgNestService } from './services';
+import { NestMongoService, UploadImgNestService } from 'src/app/services';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBTC3bPN4RtCWU42UzBLCOPol098BfbBo8',

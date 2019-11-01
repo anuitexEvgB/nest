@@ -24,8 +24,8 @@ export class AuthService {
   }
 
   // rename to social login
-  public customReg(user: GoogleFB): Observable<CustomResponse> {
-    return this.http.post<CustomResponse>(`${this.api}/users/customReg`, user).pipe(
+  public socialLogin(user: GoogleFB): Observable<CustomResponse> {
+    return this.http.post<CustomResponse>(`${this.api}/users/socialLogin`, user).pipe(
       tap(async (res: CustomResponse) => {
         if (res) {
           await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));

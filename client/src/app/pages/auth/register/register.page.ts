@@ -27,7 +27,6 @@ export class RegisterPage implements OnInit {
   }
 
   public register() {
-    debugger;
     if (this.form.valid) {
       this.authService.register(this.form.value).subscribe(res => {
         if (res === null) {

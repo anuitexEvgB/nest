@@ -50,9 +50,7 @@ export class NoteController {
     @UseGuards(AuthGuard('jwt'))
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
-    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res) {
-        console.log(res, 'FOOOOOUR');
-        console.log(typeof(res));
+    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res: any) {
         const result = await this.photoService.addPhotoToNote(id, photo);
         res.status(HttpStatus.OK).json({ result });
 
@@ -66,9 +64,7 @@ export class NoteController {
 
     @UseGuards(AuthGuard('jwt'))
     @Post('deletePhotos/:photoId')
-    async deletePhoto(@Param('photoId') id: string, @Body() namePhoto: any) {
-        console.log(namePhoto, 'THRRREEEEEE');
-        console.log(typeof(namePhoto));
+    async deletePhoto(@Param('photoId') id: string, @Body() namePhoto: {namePhoto: string}) {
         return await this.photoService.deletePhoto(id, namePhoto);
     }
 }

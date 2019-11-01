@@ -34,7 +34,7 @@ export class NoteService {
             const dat = {
                 noteId: String(a.noteId),
             };
-            this.photoRepository.update(a._id, dat);
+            this.photoRepository.update(a.id, dat);
         });
         return savedNote;
     }

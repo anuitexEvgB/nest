@@ -53,7 +53,7 @@ export class AuthService {
         return this.usersService.create(user);
     }
 
-    public async customReg(user: CustomLoginDto): Promise<any> {
+    public async socialLogin(user: CustomLoginDto): Promise<any> {
         return this.usersService.customCreate(user).then(userData => {
             if (!userData) {
                 return { status: 404 };

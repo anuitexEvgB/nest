@@ -1,8 +1,8 @@
+import { Controller, Post, Body } from '@nestjs/common';
+
 import { CustomLoginDto } from '../dto/custom-auth.dto';
 import { User } from './../models/user.model';
 import { AuthService } from '../shared/auth.service';
-
-import { Controller, Post, Body } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
@@ -20,8 +20,8 @@ export class UsersController {
         return this.authService.register(user);
     }
 
-    @Post('customReg')
+    @Post('socialLogin')
     async customCreate(@Body() user: CustomLoginDto): Promise<CustomLoginDto> {
-        return this.authService.customReg(user);
+        return this.authService.socialLogin(user);
     }
 }
