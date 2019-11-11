@@ -16,7 +16,7 @@ export class DatabaseService {
   readonly databaseName: string = 'pyps.db';
   readonly tableName: string = 'notes';
   readonly tableDelete: string = 'del';
-  readonly tableUpdate: string = 'update';
+  readonly tableUpdate: string = 'up';
 
   constructor(
     public sqlite: SQLite,
@@ -63,7 +63,7 @@ export class DatabaseService {
     // tslint:disable-next-line: max-line-length
     this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableUpdate + ' (LiteId INTEGER PRIMARY KEY, id, title, text, photos, completed, latLng, userId)', [])
       .then(() => {
-        console.log('Table Created!');
+        console.log('Table dasd Created!');
       })
       .catch(e => {
         console.log('error ' + JSON.stringify(e));
@@ -83,6 +83,7 @@ export class DatabaseService {
   }
 
   public async insertRowDelete(id) {
+    console.log(id);
     // tslint:disable-next-line: max-line-length
     await this.database.executeSql('INSERT INTO ' + this.tableDelete + '(id, userId) VALUES (?, ?)', [id.id, id.userId])
       .then((a) => {
@@ -113,9 +114,6 @@ export class DatabaseService {
         this.rowDataDelete = [];
         if (res.rows.length > 0) {
           for (let i = 0; i < res.rows.length; i++) {
-            res.rows.item(i).completed = JSON.parse(res.rows.item(i).completed);
-            res.rows.item(i).latLng = JSON.parse(res.rows.item(i).latLng);
-            res.rows.item(i).photos = JSON.parse(res.rows.item(i).photos);
             this.rowDataDelete.push(res.rows.item(i));
           }
         }
@@ -189,6 +187,17 @@ export class DatabaseService {
       });
   }
 
+  public deleteRowUpdate(item) {
+    this.database.executeSql('DELETE FROM ' + this.tableUpdate + ' WHERE id = ' + "'" + item + "'", [])
+      .then(() => {
+        console.log('Row Deleted11212!');
+        this.getRows();
+      })
+      .catch(e => {
+        console.log('error ' + JSON.stringify(e));
+      });
+  }
+
   public deleteRowOnl(item) {
     this.database.executeSql('DELETE FROM ' + this.tableName + ' WHERE id = ' + "'" + item + "'", [])
       .then(() => {
@@ -247,5 +256,9 @@ export class DatabaseService {
 
   public dropDBDel() {
     this.database.executeSql('DROP TABLE ' + this.tableDelete, []);
+  }
+
+  public dropDBUpdate() {
+    this.database.executeSql('DROP TABLE' + this.tableUpdate, []);
   }
 }

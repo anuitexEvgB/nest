@@ -23,11 +23,15 @@ export class OfflineManagerService {
         });
       });
     });
+    await this.databaseService.getRowsForUpdate().then(notesUp => {
+      notesUp.forEach(noteUp => {
+        this.noteService.updateNote(noteUp).subscribe(() => {
+          this.databaseService.deleteRowUpdate(noteUp.id);
+        });
+      });
+    });
     return await this.databaseService.getRows().then(notes => {
       notes.forEach(async note => {
-        if (note.id) {
-          this.noteService.updateNote(note).subscribe();
-        }
         if (note.id === null) {
           delete note.id;
           this.noteService.postNotes(note).subscribe(res => {

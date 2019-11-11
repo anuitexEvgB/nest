@@ -211,7 +211,9 @@ export class UpserNotePage implements OnInit {
       }
       if (stat === 1) {
         this.databaseService.updateDataOff(Object.assign({}, this.note));
-      console.log(this.note);
+        if (this.note.id) {
+          this.databaseService.insertRowUpdate(Object.assign({}, this.note));
+        }
       }
     } else {
       this.noteService.postNotes(this.note).subscribe(res => {

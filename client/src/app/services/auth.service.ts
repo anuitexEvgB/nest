@@ -23,7 +23,6 @@ export class AuthService {
     return this.http.post<UserResponse>(`${this.api}/users/register`, user);
   }
 
-  // rename to social login
   public socialLogin(user: GoogleFB): Observable<CustomResponse> {
     return this.http.post<CustomResponse>(`${this.api}/users/socialLogin`, user).pipe(
       tap(async (res: CustomResponse) => {
