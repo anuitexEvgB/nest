@@ -8,4 +8,5 @@ export interface Note {
     completed: boolean;
     latLng: Geo;
     userId: string;
+    LiteId?: number;
 }

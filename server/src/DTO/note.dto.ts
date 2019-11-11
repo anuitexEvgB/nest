@@ -11,4 +11,5 @@ export class NoteDto {
         lng: number,
     };
     readonly userId: string;
+    readonly LiteId: number;
 }

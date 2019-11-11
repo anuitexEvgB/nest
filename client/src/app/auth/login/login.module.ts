@@ -1,15 +1,18 @@
+// Vendors
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { RegisterPage } from 'src/app/pages/auth/register/register.page';
+
+// Component
+import { LoginPage } from 'src/app/auth/login/login.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: RegisterPage
+    component: LoginPage
   }
 ];
 
@@ -21,6 +24,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [RegisterPage]
+  declarations: [LoginPage]
 })
-export class RegisterPageModule {}
+export class LoginPageModule {}

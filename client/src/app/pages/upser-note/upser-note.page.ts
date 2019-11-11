@@ -1,11 +1,10 @@
 // Vendors
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { PhotoViewer } from '@ionic-native/photo-viewer/ngx';
 import { Storage } from '@ionic/storage';
-import {ToastController, Platform } from '@ionic/angular';
+import { Platform, ActionSheetController } from '@ionic/angular';
 import {
   GoogleMaps,
   GoogleMap,
@@ -20,7 +19,7 @@ import {
 import { Note, PhotoEn } from 'src/app/models';
 
 // Service
-import { UploadImgNestService, NestMongoService } from 'src/app/services';
+import { UploadImgNestService, NestMongoService, DatabaseService, NetworkService } from 'src/app/services';
 
 // Enviroment
 import * as enviroment from 'src/environments/environment';
@@ -39,16 +38,17 @@ export class UpserNotePage implements OnInit {
   private api = enviroment.environment.api;
 
   constructor(
-    public modalController: ModalController,
     public camera: Camera,
     public uploadImgNestService: UploadImgNestService,
     public photoViewer: PhotoViewer,
-    public toastCtrl: ToastController,
+    public actionSheetController: ActionSheetController,
     public platform: Platform,
     public router: Router,
     private storage: Storage,
     private route: ActivatedRoute,
     private noteService: NestMongoService,
+    private databaseService: DatabaseService,
+    private networkService: NetworkService,
   ) {
   }
 
@@ -77,12 +77,21 @@ export class UpserNotePage implements OnInit {
     this.uploadPhoto();
   }
 
+  public blockPhoto() {
+    const a = this.networkService.getCurrentNetworkStatus();
+    if (a === 1) {
+      return true;
+    }
+    if (a === 0) {
+      return false;
+    }
+  }
+
   public async close() {
     this.router.navigate(['home']);
     const undef = this.note.photos;
     await undef.forEach((del: { noteId: string; id: string; photo: any; }) => {
       if (del.noteId === 'undefined') {
-        console.log(del);
         this.uploadImgNestService.deletePhoto(del.id, del.photo).subscribe();
       }
     });
@@ -91,6 +100,148 @@ export class UpserNotePage implements OnInit {
   public toggleChange(event: { detail: { checked: false; }; }) {
     this.note.completed = event.detail.checked;
     this.checked = event.detail.checked;
+  }
+
+  public showPhoto(img: string) {
+    this.photoViewer.show(img, 'Photo');
+  }
+
+  public uploadPhoto() {
+    this.uploadImgNestService.getPhoto(this.note.id)
+      .subscribe(res => {
+        res.forEach(element => {
+          if (element.noteId === this.note.id) {
+            const path = `${this.api}/uploads/${element.photo}`;
+            this.photos.unshift({
+              id: element._id,
+              photo: path,
+              namePhoto: element.photo
+            });
+          }
+        });
+      });
+  }
+
+  public deleteFile(photo: PhotoEn) {
+    const index = this.photos.indexOf(photo);
+    if (index > -1) {
+      const del = this.photos.splice(index, 1);
+      this.uploadImgNestService.deletePhoto(del[0].id, del[0].namePhoto).subscribe();
+    }
+  }
+
+  public async presentPhotoSheet() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'PHOTO',
+      buttons: [{
+        text: 'Camera',
+        role: 'destructive',
+        icon: 'camera',
+        handler: () => {
+          this.addPhoto();
+        }
+      },
+      {
+        text: 'Library',
+        role: 'openLibrary',
+        icon: 'image',
+        handler: () => {
+          this.openLibrary();
+        }
+      }]
+    });
+    await actionSheet.present();
+  }
+
+  public async addPhoto() {
+    const options: CameraOptions = {
+      quality: 100,
+      targetHeight: 200,
+      targetWidth: 200,
+      mediaType: this.camera.MediaType.PICTURE,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+    };
+
+    this.camera.getPicture(options).then(img => {
+      const blob = this.getBlob(img, 'image/jpeg');
+      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(res => {
+        const path = `${this.api}/uploads/${res.result.photo}`;
+        this.photos.unshift({
+          id: res.result.id,
+          photo: path,
+          namePhoto: res.result.photo,
+        });
+        this.note.photos.push(res.result);
+      });
+    });
+  }
+
+  public async openLibrary() {
+    const options: CameraOptions = {
+      quality: 100,
+      targetHeight: 200,
+      targetWidth: 200,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      encodingType: this.camera.EncodingType.JPEG,
+    };
+    this.camera.getPicture(options).then((img) => {
+      const blob = this.getBlob(img, 'image/jpeg');
+      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
+        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
+        this.photos.unshift({
+          id: res.result.id,
+          photo: path,
+          namePhoto: res.result.photo
+        });
+        this.note.photos.push(res.result);
+      });
+    });
+  }
+
+  private getBlob(b64Data: string, contentType: string, sliceSize: number = 512) {
+    contentType = contentType || '';
+    sliceSize = sliceSize || 512;
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+    const blob = new Blob(byteArrays, { type: contentType });
+    return blob;
+  }
+
+  public onSubmit() {
+    let stat = this.networkService.getCurrentNetworkStatus();
+    if (this.editMode) {
+      this.noteService.updateNote(this.note).subscribe();
+      if (stat === 0) {
+        console.log(this.note);
+        this.databaseService.updateDataOnl(Object.assign({}, this.note));
+      }
+      if (stat === 1) {
+        this.databaseService.updateDataOff(Object.assign({}, this.note));
+      }
+    } else {
+      this.noteService.postNotes(this.note).subscribe(res => {
+        this.noteService.noteSubject.next(res);
+        this.databaseService.insertRow(Object.assign({}, res));
+      });
+      if (stat === 1) {
+        this.databaseService.insertRow(Object.assign({}, this.note));
+        this.noteService.noteSubject.next(this.note);
+      }
+    }
+    this.router.navigate(['home']);
   }
 
   private loadMap() {
@@ -149,115 +300,5 @@ export class UpserNotePage implements OnInit {
       });
       marker.showInfoWindow();
     });
-  }
-
-  public showPhoto(img: string) {
-    this.photoViewer.show(img, 'Photo');
-  }
-
-  uploadPhoto() {
-    this.uploadImgNestService.getPhoto(this.note.id)
-      .subscribe(res => {
-        console.log(res);
-        res.forEach(element => {
-          if (element.noteId === this.note.id) {
-            const path = `${this.api}/uploads/${element.photo}`;
-            this.photos.unshift({
-              id: element._id,
-              photo: path,
-              namePhoto: element.photo
-            });
-          }
-        });
-      });
-  }
-
-  public deleteFile(photo: PhotoEn) {
-    const index = this.photos.indexOf(photo);
-    if (index > -1) {
-      const del = this.photos.splice(index, 1);
-      this.uploadImgNestService.deletePhoto(del[0].id, del[0].namePhoto).subscribe();
-    }
-  }
-
-  public async addPhoto() {
-    const options: CameraOptions = {
-      quality: 100,
-      targetHeight: 200,
-      targetWidth: 200,
-      mediaType: this.camera.MediaType.PICTURE,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      encodingType: this.camera.EncodingType.JPEG,
-    };
-
-    this.camera.getPicture(options).then(img => {
-      const blob = this.getBlob(img, 'image/jpeg');
-      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe(res => {
-        const path = `${this.api}/uploads/${res.result.photo}`;
-        this.photos.unshift({
-          id: res.result.id,
-          photo: path,
-          namePhoto: res.result.photo,
-        });
-        this.note.photos.push(res.result);
-      });
-    });
-  }
-
-  public async openLibrary() {
-    const options: CameraOptions = {
-      quality: 100,
-      targetHeight: 200,
-      targetWidth: 200,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-      encodingType: this.camera.EncodingType.JPEG,
-    };
-    this.camera.getPicture(options).then((img) => {
-      const blob = this.getBlob(img, 'image/jpeg');
-      this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
-        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
-        this.photos.unshift({
-          id: res.result.id,
-          photo: path,
-          namePhoto: res.result.photo
-        });
-        console.log(this.photos);
-        this.note.photos.push(res.result);
-      });
-    });
-  }
-
-  private getBlob(b64Data: string, contentType: string, sliceSize: number = 512) {
-    contentType = contentType || '';
-    sliceSize = sliceSize || 512;
-    const byteCharacters = atob(b64Data);
-    const byteArrays = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-  }
-
-  public onSubmit() {
-    if (this.editMode) {
-      this.noteService.updateNote(this.note).subscribe((res) => {
-
-      });
-    } else {
-      this.noteService.postNotes(this.note).subscribe(res => {
-        this.noteService.noteSubject.next(res);
-      });
-    }
-    this.router.navigate(['home']);
   }
 }

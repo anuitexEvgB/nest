@@ -1,7 +1,7 @@
+import { Storage } from '@ionic/storage';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, from } from 'rxjs';
 
 import { Note } from 'src/app/models';
 import { environment } from 'src/environments/environment';
@@ -16,7 +16,10 @@ export class NestMongoService {
   public noteSubject = new Subject<Note>();
   private api = environment.api;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+
+    ) { }
 
   public getNotes(): Observable<Note[]> {
     return this.http.get<Note[]>(`${this.api}/note`);

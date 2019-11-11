@@ -5,6 +5,8 @@ import { Storage } from '@ionic/storage';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+import { NetworkService, ConnectionStatus, OfflineManagerService, DatabaseService } from 'src/app/services';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -17,20 +19,28 @@ export class AppComponent {
     private statusBar: StatusBar,
     private storage: Storage,
     private router: Router,
+    private networkService: NetworkService,
+    private offlineManagerService: OfflineManagerService,
+    private databaseService: DatabaseService
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
+      this.databaseService.createDB();
       this.storage.get('ACCESS_TOKEN').then(res => {
-        console.log(res);
         if (res === null) {
           this.router.navigateByUrl('login');
           this.splashScreen.hide();
         } else {
           this.router.navigateByUrl('home');
           this.splashScreen.hide();
+        }
+      });
+      this.networkService.onNetworkChange().subscribe((status: ConnectionStatus) => {
+        if (status === ConnectionStatus.Online) {
+          this.offlineManagerService.checkForEvents();
         }
       });
       this.statusBar.styleDefault();

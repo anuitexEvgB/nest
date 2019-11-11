@@ -17,10 +17,12 @@ import { Facebook } from '@ionic-native/facebook/ngx';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
-import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { IonicStorageModule } from '@ionic/storage';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { Network } from '@ionic-native/network/ngx';
+import { Dialogs } from '@ionic-native/dialogs/ngx';
+import { SQLite } from '@ionic-native/sqlite/ngx';
 
 // Component
 import { AppComponent } from 'src/app/app.component';
@@ -71,10 +73,12 @@ const firebaseConfig = {
     Geolocation,
     LocationAccuracy,
     AndroidPermissions,
-    NativeGeocoder,
     PhotoViewer,
     GooglePlus,
-    Facebook
+    Facebook,
+    Network,
+    Dialogs,
+    SQLite,
   ],
   bootstrap: [AppComponent]
 })

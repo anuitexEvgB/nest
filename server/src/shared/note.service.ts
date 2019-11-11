@@ -24,6 +24,7 @@ export class NoteService {
     }
 
     public async addNote(note: NoteDto): Promise<Note> {
+        debugger;
         const savedNote = await this.noteRepository.save(note);
         // save images
         const images = savedNote.photos;

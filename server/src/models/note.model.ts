@@ -25,4 +25,7 @@ export class Note {
 
     @Column()
     userId: string;
+
+    @Column()
+    LiteId: number;
 }

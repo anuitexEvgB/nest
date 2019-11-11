@@ -9,6 +9,10 @@
 
 <ion-content>
   <div id="map_canvas"></div>
+  <ion-button expand="full" size="large" (click)="presentPhotoSheet()" [disabled]="blockPhoto()">
+    <ion-icon slot="start" name="camera"></ion-icon>
+    Add Photo
+  </ion-button>
   <form (ngSubmit)="onSubmit()" >
     <ion-item>
         <ion-label>Title</ion-label>
@@ -22,18 +26,7 @@
       <ion-label>Done</ion-label>
       <ion-toggle color="secondary"  name="checked" [(ngModel)]="note.completed" (ionChange)="toggleChange($event)"></ion-toggle>
     </ion-item>
-   
-    <ion-item>
-      <ion-button color="tertiary" size="large" (click)="openLibrary()">
-        <ion-icon slot="start" name="image"></ion-icon>
-        Library
-      </ion-button>
-      <ion-button color="secondary" size="large" (click)="addPhoto()">
-        <ion-icon slot="start" name="camera"></ion-icon>
-        Camera
-      </ion-button>
-    </ion-item>
-
+  
     <ion-list>
         <ion-item *ngFor="let photo of photos">
           <ion-thumbnail slot="start" (click)="showPhoto(photo.photo)">
