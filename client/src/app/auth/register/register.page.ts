@@ -33,7 +33,7 @@ export class RegisterPage implements OnInit {
           alert('This email already exist');
         } else {
           this.form.reset();
-          this.router.navigate(['login']);
+          this.router.navigate(['/auth/login']);
         }
       });
     }

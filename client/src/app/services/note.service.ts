@@ -14,19 +14,19 @@ export class NestMongoService {
   public selectedNote: Note;
   public postNote: Note;
   public noteSubject = new Subject<Note>();
+
   private api = environment.api;
 
   constructor(
     private http: HttpClient,
-
-    ) { }
+  ) { }
 
   public getNotes(): Observable<Note[]> {
     return this.http.get<Note[]>(`${this.api}/note`);
   }
 
   public postNotes(data: Note): Observable<Note> {
-    const result =  this.http.post<Note>(`${this.api}/note`, data);
+    const result = this.http.post<Note>(`${this.api}/note`, data);
     return result;
   }
 

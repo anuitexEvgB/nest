@@ -33,6 +33,7 @@ export class UpserNotePage implements OnInit {
   public note: Note;
   public checked = false;
   public photos: PhotoEn[] = [];
+
   private map: GoogleMap;
   private editMode: boolean = !!this.route.snapshot.queryParams.edit;
   private api = enviroment.environment.api;
@@ -44,6 +45,7 @@ export class UpserNotePage implements OnInit {
     public actionSheetController: ActionSheetController,
     public platform: Platform,
     public router: Router,
+
     private storage: Storage,
     private route: ActivatedRoute,
     private noteService: NestMongoService,
@@ -88,7 +90,7 @@ export class UpserNotePage implements OnInit {
   }
 
   public async close() {
-    this.router.navigate(['home']);
+    this.router.navigate(['pages/home']);
     const undef = this.note.photos;
     await undef.forEach((del: { noteId: string; id: string; photo: any; }) => {
       if (del.noteId === 'undefined') {
@@ -200,6 +202,30 @@ export class UpserNotePage implements OnInit {
     });
   }
 
+  public onSubmit() {
+    let stat = this.networkService.getCurrentNetworkStatus();
+    if (this.editMode) {
+      this.noteService.updateNote(this.note).subscribe();
+      if (stat === 0) {
+        this.databaseService.updateDataOnl(Object.assign({}, this.note));
+      }
+      if (stat === 1) {
+        this.databaseService.updateDataOff(Object.assign({}, this.note));
+      console.log(this.note);
+      }
+    } else {
+      this.noteService.postNotes(this.note).subscribe(res => {
+        this.noteService.noteSubject.next(res);
+        this.databaseService.insertRow(Object.assign({}, res));
+      });
+      if (stat === 1) {
+        this.databaseService.insertRow(Object.assign({}, this.note));
+        this.noteService.noteSubject.next(this.note);
+      }
+    }
+    this.router.navigate(['pages/home']);
+  }
+
   private getBlob(b64Data: string, contentType: string, sliceSize: number = 512) {
     contentType = contentType || '';
     sliceSize = sliceSize || 512;
@@ -218,30 +244,6 @@ export class UpserNotePage implements OnInit {
     }
     const blob = new Blob(byteArrays, { type: contentType });
     return blob;
-  }
-
-  public onSubmit() {
-    let stat = this.networkService.getCurrentNetworkStatus();
-    if (this.editMode) {
-      this.noteService.updateNote(this.note).subscribe();
-      if (stat === 0) {
-        console.log(this.note);
-        this.databaseService.updateDataOnl(Object.assign({}, this.note));
-      }
-      if (stat === 1) {
-        this.databaseService.updateDataOff(Object.assign({}, this.note));
-      }
-    } else {
-      this.noteService.postNotes(this.note).subscribe(res => {
-        this.noteService.noteSubject.next(res);
-        this.databaseService.insertRow(Object.assign({}, res));
-      });
-      if (stat === 1) {
-        this.databaseService.insertRow(Object.assign({}, this.note));
-        this.noteService.noteSubject.next(this.note);
-      }
-    }
-    this.router.navigate(['home']);
   }
 
   private loadMap() {

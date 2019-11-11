@@ -2,11 +2,9 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', loadChildren: () => import('./auth/login/login.module').then( m => m.LoginPageModule)},
-  { path: 'upser-note', loadChildren: './pages/upser-note/upser-note.module#UpserNotePageModule' },
-  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
-  { path: 'register', loadChildren: './auth/register/register.module#RegisterPageModule' },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: 'auth', loadChildren: './auth/auth.module#AuthModule' },
+  { path: 'pages', loadChildren: './pages/pages.module#PagesModule' },
 ];
 
 @NgModule({

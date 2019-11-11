@@ -12,9 +12,11 @@ export class DatabaseService {
   public nameModel = '';
   public rowData: any = [];
   public rowDataDelete: any = [];
+  public rowDataUpdate: any = [];
   readonly databaseName: string = 'pyps.db';
   readonly tableName: string = 'notes';
   readonly tableDelete: string = 'del';
+  readonly tableUpdate: string = 'update';
 
   constructor(
     public sqlite: SQLite,
@@ -31,6 +33,7 @@ export class DatabaseService {
       this.database = db;
       this.createTable();
       this.tableForDelete();
+      this.tableForUpdate();
     }).catch(e => console.log(e));
   }
 
@@ -47,7 +50,7 @@ export class DatabaseService {
 
   public tableForDelete() {
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableDelete + ' (LiteId INTEGER PRIMARY KEY, id, title, text, photos, completed, latLng, userId, del)', [])
+    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableDelete + ' (LiteId INTEGER PRIMARY KEY, id, userId)', [])
       .then(() => {
         console.log('Table Created!');
       })
@@ -56,13 +59,32 @@ export class DatabaseService {
       });
   }
 
-  public async insertRowDelete(note: any) {
+  public tableForUpdate() {
+    // tslint:disable-next-line: max-line-length
+    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableUpdate + ' (LiteId INTEGER PRIMARY KEY, id, title, text, photos, completed, latLng, userId)', [])
+      .then(() => {
+        console.log('Table Created!');
+      })
+      .catch(e => {
+        console.log('error ' + JSON.stringify(e));
+      });
+  }
+
+  public async insertRowUpdate(note: any) {
     note.latLng = JSON.stringify(note.latLng);
     note.photos = JSON.stringify(note.photos);
-    const del = 'delete';
     const { id, title, text, photos, completed, latLng, userId } = note;
     // tslint:disable-next-line: max-line-length
-    await this.database.executeSql('INSERT INTO ' + this.tableDelete + '(id, title, text, photos, completed, latLng, userId, del) VALUES (?,?,?,?,?,?,?,?)', [id, title, text, photos, completed, latLng, userId, del])
+    await this.database.executeSql('INSERT INTO ' + this.tableUpdate + '(id, title, text, photos, completed, latLng, userId) VALUES (?,?,?,?,?,?,?)', [id, title, text, photos, completed, latLng, userId])
+      .then((a) => {
+        console.log('Row Inserted');
+      })
+      .catch(e => console.log(e));
+  }
+
+  public async insertRowDelete(id) {
+    // tslint:disable-next-line: max-line-length
+    await this.database.executeSql('INSERT INTO ' + this.tableDelete + '(id, userId) VALUES (?, ?)', [id.id, id.userId])
       .then((a) => {
         console.log('Row Inserted');
       })
@@ -129,6 +151,31 @@ export class DatabaseService {
         console.log('error ' + JSON.stringify(e));
       });
     return this.rowData;
+  }
+
+   public async getRowsForUpdate() {
+    let userId = '';
+    await this.storage.get('USER_ID').then(user => {
+      userId = user;
+    });
+    await this.database.executeSql('SELECT * FROM ' + this.tableUpdate + ' WHERE userId = ' + "'" + userId + "'", [])
+      .then((res) => {
+        this.rowDataUpdate = [];
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            res.rows.item(i).completed = JSON.parse(res.rows.item(i).completed);
+            res.rows.item(i).latLng = JSON.parse(res.rows.item(i).latLng);
+            res.rows.item(i).photos = JSON.parse(res.rows.item(i).photos);
+            this.rowDataUpdate.push(res.rows.item(i));
+          }
+        }
+        console.log(this.rowDataUpdate);
+        return this.rowDataUpdate;
+      })
+      .catch(e => {
+        console.log('error ' + JSON.stringify(e));
+      });
+    return this.rowDataUpdate;
   }
 
   public deleteRowDelete(item) {

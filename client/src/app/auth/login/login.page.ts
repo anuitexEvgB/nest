@@ -21,6 +21,7 @@ export class LoginPage implements OnInit {
   constructor(
     public loadingCtrl: LoadingController,
     public authService: AuthService,
+
     private router: Router,
     private googlePlus: GooglePlus,
     private fb: Facebook,
@@ -39,7 +40,7 @@ export class LoginPage implements OnInit {
       this.authService.login(this.form.value).subscribe(res => {
         this.form.reset();
         if (res.status === 200) {
-          this.router.navigate(['home']);
+          this.router.navigate(['/pages/home']);
         } else if (res.status === 404) {
           alert('Wrong email or password');
         }
@@ -63,7 +64,7 @@ export class LoginPage implements OnInit {
         email: gplus.email,
       };
       this.authService.socialLogin(userData).subscribe(_ => {
-        this.router.navigate(['home']);
+        this.router.navigate(['/pages/home']);
       });
       loading.dismiss();
     } catch (err) {
@@ -88,7 +89,7 @@ export class LoginPage implements OnInit {
           email: user.email
         };
         this.authService.socialLogin(this.userData).subscribe((res) => {
-          this.router.navigate(['home']);
+          this.router.navigate(['/pages/home']);
         });
         loading.dismiss();
       });

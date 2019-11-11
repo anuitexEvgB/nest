@@ -31,10 +31,10 @@ export class AppComponent {
       this.databaseService.createDB();
       this.storage.get('ACCESS_TOKEN').then(res => {
         if (res === null) {
-          this.router.navigateByUrl('login');
+          this.router.navigateByUrl('/auth/login');
           this.splashScreen.hide();
         } else {
-          this.router.navigateByUrl('home');
+          this.router.navigateByUrl('/pages/home');
           this.splashScreen.hide();
         }
       });

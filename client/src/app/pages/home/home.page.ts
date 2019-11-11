@@ -16,10 +16,11 @@ export class HomePage implements OnInit {
 
   constructor(
     public modalController: ModalController,
+    public databaseService: DatabaseService,
+
     private noteService: NestMongoService,
     private router: Router,
     private authService: AuthService,
-    public databaseService: DatabaseService,
     private networkService: NetworkService,
   ) {
     this.noteService.noteSubject.subscribe((res) => {
@@ -31,13 +32,6 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.refreshSQL();
     this.getAll();
-  }
-
-  private getAll() {
-    this.noteService.getNotes()
-      .subscribe(response => {
-        this.notes = response;
-      });
   }
 
   public refreshSQL() {
@@ -59,11 +53,11 @@ export class HomePage implements OnInit {
 
   public async logout() {
     await this.authService.logout();
-    await this.router.navigateByUrl('login');
+    await this.router.navigateByUrl('/auth/login');
   }
 
   public add() {
-    this.router.navigate(['upser-note']);
+    this.router.navigate(['/pages/upsert']);
   }
 
   public edit(note: Note) {
@@ -73,18 +67,21 @@ export class HomePage implements OnInit {
         edit: true,
       }
     };
-    this.router.navigate(['upser-note'], navigationExtras);
+    this.router.navigate(['/pages/upsert'], navigationExtras);
   }
 
   public delete(note: Note) {
-    console.log(note);
     let status = this.networkService.getCurrentNetworkStatus();
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);
       if (status === 1) {
         if (note.id) {
-          this.databaseService.insertRowDelete(note);
+          const del = {
+            id: note.id,
+            userId: note.userId
+          }
+          this.databaseService.insertRowDelete(del);
         }
         this.databaseService.deleteRowOff(note.LiteId);
       }
@@ -98,5 +95,12 @@ export class HomePage implements OnInit {
 
   public autoClose(slidingItem: IonItemSliding) {
     slidingItem.close();
+  }
+
+  private getAll() {
+    this.noteService.getNotes()
+      .subscribe(response => {
+        this.notes = response;
+      });
   }
 }
