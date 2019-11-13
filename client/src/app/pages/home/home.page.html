@@ -16,6 +16,12 @@
     ></ion-refresher-content>
   </ion-refresher>
   <ion-button expand="full" size="large" color="primary" (click)="add()">Add</ion-button>
+  <!-- <ion-button (click)="getRows()">getRows</ion-button>
+  <ion-button (click)="getRowsForDelete()">getRowsForDelete</ion-button>
+  <ion-button (click)="getRowsForUpdate()">getRowsForUpdate</ion-button>
+  <ion-button (click)="dropDB()">dropDB</ion-button>
+  <ion-button (click)="dropDBDel()">getdropDBDelRows</ion-button>
+  <ion-button (click)="dropDBUpdate()">dropDBUpdate</ion-button> -->
   <ion-list>
     <ion-list-header>Notes</ion-list-header>
     <ion-item-sliding *ngFor="let note of notes" #slidingItem>

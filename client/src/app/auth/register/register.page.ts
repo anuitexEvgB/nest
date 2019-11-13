@@ -29,7 +29,7 @@ export class RegisterPage implements OnInit {
   public register() {
     if (this.form.valid) {
       this.authService.register(this.form.value).subscribe(res => {
-        if (res === null) {
+        if (!res) {
           alert('This email already exist');
         } else {
           this.form.reset();

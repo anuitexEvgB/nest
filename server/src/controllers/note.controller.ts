@@ -3,10 +3,9 @@ import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, Uploa
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 
-import { PhotoService, NoteService } from '../shared';
-import { NoteDto } from '../dto/note.dto';
-import { Note } from '../models/note.model';
-import { MulterOptions } from '../middleware/multer-config';
+import { PhotoService, NoteService } from '../services';
+import { Note } from '../entities';
+import { MulterOptions } from '../common/middleware/multer-config';
 
 @Controller('note')
 export class NoteController {
@@ -18,15 +17,15 @@ export class NoteController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get()
-    async getNotes(@Req() req: any) {
+    async getNotes(@Req() req) {
         const user = req.user;
         return await this.noteService.getNotes(user.id);
     }
 
     @UseGuards(AuthGuard('jwt'))
     @Post()
-    async create(@Body() note: NoteDto) {
-        return await this.noteService.addNote(note);
+    async create(@Body() body) {
+        return await this.noteService.addNote(body.note, body.photo);
     }
 
     @UseGuards(AuthGuard('jwt'))
@@ -50,7 +49,7 @@ export class NoteController {
     @UseGuards(AuthGuard('jwt'))
     @Post('upload/:id')
     @UseInterceptors(AnyFilesInterceptor(MulterOptions))
-    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res: any) {
+    async uploadFile(@UploadedFiles() photo, @Param('id') id: ObjectID, @Res() res) {
         const result = await this.photoService.addPhotoToNote(id, photo);
         res.status(HttpStatus.OK).json({ result });
 

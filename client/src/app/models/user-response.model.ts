@@ -1,6 +1,6 @@
 export interface UserResponse {
-    access_token: string;
-    expires_in: number;
+    accessToken: string;
+    expiresIn: number;
     status: number;
-    user_id: string;
+    userId: string;
 }

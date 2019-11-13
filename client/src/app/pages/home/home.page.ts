@@ -1,3 +1,4 @@
+import { switchMap } from 'rxjs/operators';
 import { Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { IonItemSliding, ModalController } from '@ionic/angular';
@@ -23,9 +24,18 @@ export class HomePage implements OnInit {
     private authService: AuthService,
     private networkService: NetworkService,
   ) {
-    this.noteService.noteSubject.subscribe((res) => {
+
+    const subscription = this.noteService.noteSubject.pipe(switchMap((res) => {
       this.notes.push(res);
-      this.refreshSQL();
+      return this.networkService.status;
+    }));
+
+    subscription.subscribe((res) => {
+      if (res === 1) {
+        this.databaseService.getRows().then(response => {
+          this.notes = response;
+        });
+      }
     });
   }
 
@@ -71,7 +81,7 @@ export class HomePage implements OnInit {
   }
 
   public delete(note: Note) {
-    let status = this.networkService.getCurrentNetworkStatus();
+    const status = this.networkService.getCurrentNetworkStatus();
     const index = this.notes.indexOf(note);
     if (index > -1) {
       this.notes.splice(index, 1);
@@ -103,4 +113,28 @@ export class HomePage implements OnInit {
         this.notes = response;
       });
   }
+
+  // getRows() {
+  //   this.databaseService.getRows();
+  // }
+
+  // dropDB() {
+  //   this.databaseService.dropDB();
+  // }
+
+  // dropDBDel() {
+  //   this.databaseService.dropDBDel();
+  // }
+
+  // dropDBUpdate() {
+  //   this.databaseService.dropDBUpdate();
+  // }
+
+  // getRowsForDelete() {
+  //   this.databaseService.getRowsForDelete();
+  // }
+
+  // getRowsForUpdate() {
+  //   this.databaseService.getRowsForUpdate();
+  // }
 }

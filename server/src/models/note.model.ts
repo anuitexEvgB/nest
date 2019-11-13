@@ -1,31 +1,28 @@
-import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
+import { ObjectID } from 'typeorm';
+import { ApiModelProperty } from '@nestjs/swagger';
 
-@Entity()
-export class Note {
-    @ObjectIdColumn()
+export class NoteModel {
+    @ApiModelProperty()
     id: ObjectID;
 
-    @Column()
+    @ApiModelProperty()
     title: string;
 
-    @Column()
+    @ApiModelProperty()
     text: string;
 
-    @Column()
-    photos: any;
-
-    @Column()
+    @ApiModelProperty()
     completed: boolean;
 
-    @Column()
+    @ApiModelProperty()
     latLng: {
         lat: number,
         lng: number,
     };
 
-    @Column()
+    @ApiModelProperty()
     userId: string;
 
-    @Column()
+    @ApiModelProperty()
     LiteId: number;
 }

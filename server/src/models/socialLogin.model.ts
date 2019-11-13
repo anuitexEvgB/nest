@@ -1,14 +1,13 @@
 import { ObjectID } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
 
-export class PhotoModel {
+export class SocialLoginModel {
     @ApiModelProperty()
     id: ObjectID;
 
     @ApiModelProperty()
-    noteId: string;
+    email: string;
 
     @ApiModelProperty()
-    photo: string;
-
+    name: string;
 }

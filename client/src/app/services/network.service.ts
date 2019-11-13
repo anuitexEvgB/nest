@@ -17,13 +17,12 @@ export class NetworkService {
   constructor(private network: Network, private toastController: ToastController, private plt: Platform) {
     this.plt.ready().then(() => {
       this.initializeNetworkEvents();
-      let status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
+      const status = this.network.type !== 'none' ? ConnectionStatus.Online : ConnectionStatus.Offline;
       this.status.next(status);
     });
   }
 
   public initializeNetworkEvents() {
-
     this.network.onDisconnect().subscribe(() => {
       if (this.status.getValue() === ConnectionStatus.Online) {
         console.log('WE ARE OFFLINE');
@@ -42,8 +41,8 @@ export class NetworkService {
   public async updateNetworkStatus(status: ConnectionStatus) {
     this.status.next(status);
 
-    let connection = status === ConnectionStatus.Offline ? 'Offline' : 'Online';
-    let toast = this.toastController.create({
+    const connection = status === ConnectionStatus.Offline ? 'Offline' : 'Online';
+    const toast = this.toastController.create({
       message: `You are now ${connection}`,
       duration: 3000,
       position: 'bottom'

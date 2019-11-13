@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, from } from 'rxjs';
 
-import { Note } from 'src/app/models';
+import { Note, Photo } from 'src/app/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -25,8 +25,8 @@ export class NestMongoService {
     return this.http.get<Note[]>(`${this.api}/note`);
   }
 
-  public postNotes(data: Note): Observable<Note> {
-    const result = this.http.post<Note>(`${this.api}/note`, data);
+  public postNotes(note: Note, photo: Photo[]): Observable<any> {
+    const result = this.http.post<Note>(`${this.api}/note`, {note, photo});
     return result;
   }
 

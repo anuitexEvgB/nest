@@ -1,11 +1,19 @@
 export interface Photo {
-    _id?: string;
-    noteId: number;
+    id?: string;
+    noteId: number | string;
     photo: string;
 }
 
-export interface PhotoEn {
+export interface PhotoRemove {
     id?: string;
     photo: string;
     namePhoto: string;
+}
+
+export interface PhotoResponse {
+    result: {
+        id: string;
+        noteId: string;
+        photo: string
+    };
 }

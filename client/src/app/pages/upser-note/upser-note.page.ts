@@ -16,13 +16,13 @@ import {
 } from '@ionic-native/google-maps';
 
 // Models
-import { Note, PhotoEn } from 'src/app/models';
+import { Note, PhotoRemove, Photo } from 'src/app/models';
 
 // Service
 import { UploadImgNestService, NestMongoService, DatabaseService, NetworkService } from 'src/app/services';
 
 // Enviroment
-import * as enviroment from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-upser-note',
@@ -32,11 +32,11 @@ import * as enviroment from 'src/environments/environment';
 export class UpserNotePage implements OnInit {
   public note: Note;
   public checked = false;
-  public photos: PhotoEn[] = [];
-
+  public photos: PhotoRemove[] = [];
+  public photostest: Photo[] = [];
   private map: GoogleMap;
   private editMode: boolean = !!this.route.snapshot.queryParams.edit;
-  private api = enviroment.environment.api;
+  private api = environment.api;
 
   constructor(
     public camera: Camera,
@@ -61,7 +61,6 @@ export class UpserNotePage implements OnInit {
       this.note = {
         title: '',
         text: '',
-        photos: [],
         completed: false,
         latLng: {
           lat: 0,
@@ -80,19 +79,19 @@ export class UpserNotePage implements OnInit {
   }
 
   public blockPhoto() {
-    const a = this.networkService.getCurrentNetworkStatus();
-    if (a === 1) {
+    const status = this.networkService.getCurrentNetworkStatus();
+    if (status === 1) {
       return true;
     }
-    if (a === 0) {
+    if (status === 0) {
       return false;
     }
   }
 
   public async close() {
     this.router.navigate(['pages/home']);
-    const undef = this.note.photos;
-    await undef.forEach((del: { noteId: string; id: string; photo: any; }) => {
+    const undef = this.photostest;
+    await undef.forEach((del) => {
       if (del.noteId === 'undefined') {
         this.uploadImgNestService.deletePhoto(del.id, del.photo).subscribe();
       }
@@ -115,7 +114,7 @@ export class UpserNotePage implements OnInit {
           if (element.noteId === this.note.id) {
             const path = `${this.api}/uploads/${element.photo}`;
             this.photos.unshift({
-              id: element._id,
+              id: element.id,
               photo: path,
               namePhoto: element.photo
             });
@@ -124,11 +123,11 @@ export class UpserNotePage implements OnInit {
       });
   }
 
-  public deleteFile(photo: PhotoEn) {
+  public deleteFile(photo: PhotoRemove) {
     const index = this.photos.indexOf(photo);
     if (index > -1) {
       const del = this.photos.splice(index, 1);
-      this.uploadImgNestService.deletePhoto(del[0].id, del[0].namePhoto).subscribe();
+      this.uploadImgNestService.deletePhoto(photo.id, photo.namePhoto).subscribe();
     }
   }
 
@@ -174,7 +173,7 @@ export class UpserNotePage implements OnInit {
           photo: path,
           namePhoto: res.result.photo,
         });
-        this.note.photos.push(res.result);
+        this.photostest.push(res.result);
       });
     });
   }
@@ -191,19 +190,19 @@ export class UpserNotePage implements OnInit {
     this.camera.getPicture(options).then((img) => {
       const blob = this.getBlob(img, 'image/jpeg');
       this.uploadImgNestService.uploadFile(blob, this.note.id).subscribe((res) => {
-        const path = 'http://10.10.1.133:3000/uploads/' + res.result.photo;
+        const path = `${this.api}/uploads/` + res.result.photo;
         this.photos.unshift({
           id: res.result.id,
           photo: path,
           namePhoto: res.result.photo
         });
-        this.note.photos.push(res.result);
+        this.photostest.push(res.result);
       });
     });
   }
 
   public onSubmit() {
-    let stat = this.networkService.getCurrentNetworkStatus();
+    const stat = this.networkService.getCurrentNetworkStatus();
     if (this.editMode) {
       this.noteService.updateNote(this.note).subscribe();
       if (stat === 0) {
@@ -216,7 +215,7 @@ export class UpserNotePage implements OnInit {
         }
       }
     } else {
-      this.noteService.postNotes(this.note).subscribe(res => {
+      this.noteService.postNotes(this.note, this.photostest).subscribe(res => {
         this.noteService.noteSubject.next(res);
         this.databaseService.insertRow(Object.assign({}, res));
       });
@@ -277,7 +276,6 @@ export class UpserNotePage implements OnInit {
     }
     this.map.on(GoogleMapsEvent.MAP_LONG_CLICK).subscribe((params: any[]) => {
       this.map.clear();
-
       const geo: LatLng = params[0];
       this.note.latLng.lat = geo.lat;
       this.note.latLng.lng = geo.lng;

@@ -23,6 +23,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { Network } from '@ionic-native/network/ngx';
 import { Dialogs } from '@ionic-native/dialogs/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
+import { Base64ToGallery } from '@ionic-native/base64-to-gallery/ngx';
 
 // Component
 import { AppComponent } from 'src/app/app.component';
@@ -79,6 +80,7 @@ const firebaseConfig = {
     Network,
     Dialogs,
     SQLite,
+    Base64ToGallery,
   ],
   bootstrap: [AppComponent]
 })

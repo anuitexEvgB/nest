@@ -15,8 +15,8 @@ import { GoogleFB } from 'src/app/models/googleFB.model';
 })
 export class LoginPage implements OnInit {
 
-  private form: FormGroup;
   private userData: GoogleFB;
+  public form: FormGroup;
 
   constructor(
     public loadingCtrl: LoadingController,
@@ -72,7 +72,6 @@ export class LoginPage implements OnInit {
       this.loadingCtrl.dismiss();
     }
   }
-
 
   public async fbLogin() {
     const loading = await this.loadingCtrl.create({

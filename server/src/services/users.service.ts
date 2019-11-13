@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CustomLoginDto } from '../dto/custom-auth.dto';
-import { User } from '../models/user.model';
+import { SocialLoginModel, RegistrationModel } from '../models';
+import { User } from '../entities';
 
 @Injectable()
 export class UsersService {
@@ -24,19 +24,19 @@ export class UsersService {
         return res;
     }
 
-    public async create(user: User): Promise<User> {
-        return this.findByEmail(user.email).then(async res => {
+    public async create(model: RegistrationModel): Promise<User> {
+        return this.findByEmail(model.email).then(async res => {
             if (!res) {
-                return await this.UserRepository.save(user);
+                return await this.UserRepository.save(model);
             }
             return;
         });
     }
 
-    public async customCreate(user: CustomLoginDto): Promise<CustomLoginDto> {
-        return this.findByEmail(user.email).then(async res => {
+    public async customCreate(model: SocialLoginModel): Promise<User> {
+        return this.findByEmail(model.email).then(async res => {
             if (!res) {
-                return await this.UserRepository.save(user);
+                return await this.UserRepository.save(model);
             }
             return res;
         });

@@ -34,7 +34,7 @@ export class OfflineManagerService {
       notes.forEach(async note => {
         if (note.id === null) {
           delete note.id;
-          this.noteService.postNotes(note).subscribe(res => {
+          this.noteService.postNotes(note, []).subscribe(res => {
             this.databaseService.updateId(res);
           });
         }

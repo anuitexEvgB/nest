@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Storage } from '@ionic/storage';
 
-import { UserResponse, User, GoogleFB, CustomResponse } from 'src/app/models';
+import { UserResponse, User, GoogleFB } from 'src/app/models';
 import { environment } from 'src/environments/environment';
 
 
@@ -23,12 +23,12 @@ export class AuthService {
     return this.http.post<UserResponse>(`${this.api}/users/register`, user);
   }
 
-  public socialLogin(user: GoogleFB): Observable<CustomResponse> {
-    return this.http.post<CustomResponse>(`${this.api}/users/socialLogin`, user).pipe(
-      tap(async (res: CustomResponse) => {
+  public socialLogin(user: GoogleFB): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.api}/users/socialLogin`, user).pipe(
+      tap(async (res: UserResponse) => {
         if (res) {
-          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
-          await this.storage.set('USER_ID', res.user_id);
+          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.accessToken));
+          await this.storage.set('USER_ID', res.userId);
         }
       })
     );
@@ -38,8 +38,8 @@ export class AuthService {
     return this.http.post(`${this.api}/users/login`, user).pipe(
       tap(async (res: UserResponse) => {
         if (res) {
-          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.access_token));
-          await this.storage.set('USER_ID', res.user_id);
+          await this.storage.set('ACCESS_TOKEN', JSON.stringify(res.accessToken));
+          await this.storage.set('USER_ID', res.userId);
         }
       })
     );

@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID } from 'typeorm';
 
-import { Photo } from './../models/photo.model';
-import { NoteDto } from '../dto/note.dto';
-import { Note } from '../models/note.model';
+import { NoteModel } from '../models';
+import { Note, Photo } from '../entities';
 
 @Injectable()
 export class NoteService {
+    ObjectId = require('mongodb').ObjectID;
 
     constructor(
         @InjectRepository(Note) private noteRepository: Repository<Note>,
@@ -23,18 +23,13 @@ export class NoteService {
         return note;
     }
 
-    public async addNote(note: NoteDto): Promise<Note> {
-        const savedNote = await this.noteRepository.save(note);
-        const images = savedNote.photos;
-        images.forEach(x => {
-            x.noteId = savedNote.id;
+    public async addNote(model: NoteModel, photo: Photo[]): Promise<Note> {
+        const savedNote = await this.noteRepository.save(model);
+        photo.forEach(x => {
+            x.noteId = String(savedNote.id);
+            x.id = this.ObjectId(x.id);
         });
-        images.forEach(a => {
-            const dat = {
-                noteId: String(a.noteId),
-            };
-            this.photoRepository.update(a.id, dat);
-        });
+        this.photoRepository.save(photo);
         return savedNote;
     }
 

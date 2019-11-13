@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ObjectID } from 'typeorm';
 
-import { Photo } from '../models';
+import { Photo } from '../entities';
 
 @Injectable()
 export class PhotoService {
@@ -20,6 +20,7 @@ export class PhotoService {
     }
 
     public async getPhotoToNote(id: number): Promise<Photo[]> {
+
         const res = await this.photoRepository.find({
             where: {
                 noteId: id,
@@ -32,8 +33,7 @@ export class PhotoService {
         const name = namePhoto.namePhoto;
         const fs = require('fs');
         const file = 'uploads/';
-        // tslint:disable-next-line: only-arrow-functions
-        fs.unlink(file + name, function(err) {
+        fs.unlink(file + name, (err) => {
             // tslint:disable-next-line: no-console
             console.error(err, ' Eror unlinka');
         });

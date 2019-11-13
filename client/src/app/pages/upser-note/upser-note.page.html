@@ -30,7 +30,7 @@
     <ion-list>
         <ion-item *ngFor="let photo of photos">
           <ion-thumbnail slot="start" (click)="showPhoto(photo.photo)">
-            <ion-img [src]="photo.photo"></ion-img>
+            <ion-img class="sad" [src]="photo.photo"></ion-img>
           </ion-thumbnail>
           <ion-label>{{note.text|| "-"}}</ion-label>
           <ion-button slot="end" fill="clear" (click)="deleteFile(photo)">

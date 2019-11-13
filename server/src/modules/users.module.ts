@@ -5,16 +5,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
 // Component
-import { JwtStrategy, UsersController } from './';
+import { UsersController } from '../controllers/users.controller';
+import { JwtStrategy } from '../common/jwt.strategy';
+import { DatabaseModule } from './database.module';
 
-// Models
-import { User } from '../models/user.model';
+// entities
+import { User } from '../entities';
 
 // Service
-import { UsersService, AuthService } from '../shared';
+import { UsersService, AuthService } from '../services';
 
 @Module({
     imports: [
+        DatabaseModule,
         TypeOrmModule.forFeature([User]),
         PassportModule.register({
             defaultStrategy: 'jwt',

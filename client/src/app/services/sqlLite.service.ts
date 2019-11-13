@@ -1,4 +1,5 @@
-import { AuthService } from './auth.service';
+import { Note } from 'src/app/models';
+import { Sql } from './../models/sqLite.model';
 import { Storage } from '@ionic/storage';
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
@@ -10,9 +11,9 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite/ngx';
 export class DatabaseService {
   public database: SQLiteObject;
   public nameModel = '';
-  public rowData: any = [];
-  public rowDataDelete: any = [];
-  public rowDataUpdate: any = [];
+  public rowData: Note[] = [];
+  public rowDataDelete: Note[] = [];
+  public rowDataUpdate: Note[] = [];
   readonly databaseName: string = 'pyps.db';
   readonly tableName: string = 'notes';
   readonly tableDelete: string = 'del';
@@ -39,9 +40,8 @@ export class DatabaseService {
 
   public createTable() {
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableName + ' (LiteId INTEGER PRIMARY KEY, id, title, text, photos, completed, latLng, userId)', [])
+    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableName + ' (LiteId INTEGER PRIMARY KEY, id, title, text, completed, latLng, userId)', [])
       .then(() => {
-        console.log('Table Created!');
       })
       .catch(e => {
         console.log('error ' + JSON.stringify(e));
@@ -50,9 +50,8 @@ export class DatabaseService {
 
   public tableForDelete() {
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableDelete + ' (LiteId INTEGER PRIMARY KEY, id, userId)', [])
+    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableDelete + ' (id, userId)', [])
       .then(() => {
-        console.log('Table Created!');
       })
       .catch(e => {
         console.log('error ' + JSON.stringify(e));
@@ -61,45 +60,38 @@ export class DatabaseService {
 
   public tableForUpdate() {
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableUpdate + ' (LiteId INTEGER PRIMARY KEY, id, title, text, photos, completed, latLng, userId)', [])
+    this.database.executeSql('CREATE TABLE IF NOT EXISTS ' + this.tableUpdate + ' (LiteId INTEGER PRIMARY KEY, id, title, text, completed, latLng, userId)', [])
       .then(() => {
-        console.log('Table dasd Created!');
       })
       .catch(e => {
         console.log('error ' + JSON.stringify(e));
       });
   }
 
-  public async insertRowUpdate(note: any) {
+  public async insertRowUpdate(note: Sql) {
     note.latLng = JSON.stringify(note.latLng);
-    note.photos = JSON.stringify(note.photos);
-    const { id, title, text, photos, completed, latLng, userId } = note;
+    const { id, title, text, completed, latLng, userId } = note;
     // tslint:disable-next-line: max-line-length
-    await this.database.executeSql('INSERT INTO ' + this.tableUpdate + '(id, title, text, photos, completed, latLng, userId) VALUES (?,?,?,?,?,?,?)', [id, title, text, photos, completed, latLng, userId])
+    await this.database.executeSql('INSERT INTO ' + this.tableUpdate + '(id, title, text, completed, latLng, userId) VALUES (?,?,?,?,?,?)', [id, title, text, completed, latLng, userId])
       .then((a) => {
-        console.log('Row Inserted');
       })
       .catch(e => console.log(e));
   }
 
-  public async insertRowDelete(id) {
-    console.log(id);
+  public async insertRowDelete(id: { id: number; userId: string; }) {
     // tslint:disable-next-line: max-line-length
     await this.database.executeSql('INSERT INTO ' + this.tableDelete + '(id, userId) VALUES (?, ?)', [id.id, id.userId])
       .then((a) => {
-        console.log('Row Inserted');
       })
       .catch(e => console.log(e));
   }
 
-  public async insertRow(note: any) {
+  public async insertRow(note: Sql) {
     note.latLng = JSON.stringify(note.latLng);
-    note.photos = JSON.stringify(note.photos);
-    const { id, title, text, photos, completed, latLng, userId } = note;
+    const { id, title, text, completed, latLng, userId } = note;
     // tslint:disable-next-line: max-line-length
-    await this.database.executeSql('INSERT INTO ' + this.tableName + '(id, title, text, photos, completed, latLng, userId) VALUES (?,?,?,?,?,?,?)', [id, title, text, photos, completed, latLng, userId])
+    await this.database.executeSql('INSERT INTO ' + this.tableName + '(id, title, text, completed, latLng, userId) VALUES (?,?,?,?,?,?)', [id, title, text, completed, latLng, userId])
       .then((a) => {
-        console.log('Row Inserted');
       })
       .catch(e => console.log(e));
   }
@@ -138,7 +130,6 @@ export class DatabaseService {
           for (let i = 0; i < res.rows.length; i++) {
             res.rows.item(i).completed = JSON.parse(res.rows.item(i).completed);
             res.rows.item(i).latLng = JSON.parse(res.rows.item(i).latLng);
-            res.rows.item(i).photos = JSON.parse(res.rows.item(i).photos);
             this.rowData.push(res.rows.item(i));
           }
         }
@@ -163,7 +154,6 @@ export class DatabaseService {
           for (let i = 0; i < res.rows.length; i++) {
             res.rows.item(i).completed = JSON.parse(res.rows.item(i).completed);
             res.rows.item(i).latLng = JSON.parse(res.rows.item(i).latLng);
-            res.rows.item(i).photos = JSON.parse(res.rows.item(i).photos);
             this.rowDataUpdate.push(res.rows.item(i));
           }
         }
@@ -176,10 +166,9 @@ export class DatabaseService {
     return this.rowDataUpdate;
   }
 
-  public deleteRowDelete(item) {
+  public deleteRowDelete(item: number) {
     this.database.executeSql('DELETE FROM ' + this.tableDelete + ' WHERE id = ' + "'" + item + "'", [])
       .then(() => {
-        console.log('Row Deleted ADAWDSADSADDSASAD!');
         this.getRows();
       })
       .catch(e => {
@@ -187,10 +176,9 @@ export class DatabaseService {
       });
   }
 
-  public deleteRowUpdate(item) {
+  public deleteRowUpdate(item: number) {
     this.database.executeSql('DELETE FROM ' + this.tableUpdate + ' WHERE id = ' + "'" + item + "'", [])
       .then(() => {
-        console.log('Row Deleted11212!');
         this.getRows();
       })
       .catch(e => {
@@ -198,10 +186,9 @@ export class DatabaseService {
       });
   }
 
-  public deleteRowOnl(item) {
+  public deleteRowOnl(item: number) {
     this.database.executeSql('DELETE FROM ' + this.tableName + ' WHERE id = ' + "'" + item + "'", [])
       .then(() => {
-        console.log('Row Deleted!');
         this.getRows();
       })
       .catch(e => {
@@ -209,10 +196,9 @@ export class DatabaseService {
       });
   }
 
-  public deleteRowOff(item) {
+  public deleteRowOff(item: number) {
     this.database.executeSql('DELETE FROM ' + this.tableName + ' WHERE LiteId = ' + item, [])
       .then(() => {
-        console.log('Row Deleted!');
         this.getRows();
       })
       .catch(e => {
@@ -220,32 +206,28 @@ export class DatabaseService {
       });
   }
 
-  public updateId(note) {
+  public updateId(note: Note) {
     const id = note.id;
     const LiteId = note.LiteId;
     this.database.executeSql('UPDATE ' + this.tableName + ' SET id = ' + "'" + id + "'" + ' WHERE LiteId = ' + "'" + LiteId + "'", []);
   }
 
-  public updateDataOff(note) {
+  public updateDataOff(note: Sql) {
     note.latLng = JSON.stringify(note.latLng);
-    note.photos = JSON.stringify(note.photos);
-    const { LiteId, title, text, photos, completed, latLng } = note;
+    const { LiteId, title, text, completed, latLng } = note;
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('UPDATE ' + this.tableName + ' SET title = ' + "'" + title + "'" + ', text = ' + "'" + text + "'" + ', photos = ' + "'" + photos + "'" + ', completed = ' + "'" + completed + "'" + ', latLng = ' + "'" + latLng + "'" + ' WHERE LiteId = ' + "'" + LiteId + "'", [])
+    this.database.executeSql('UPDATE ' + this.tableName + ' SET title = ' + "'" + title + "'" + ', text = ' + "'" + text + "'" + ', completed = ' + "'" + completed + "'" + ', latLng = ' + "'" + latLng + "'" + ' WHERE LiteId = ' + "'" + LiteId + "'", [])
       .then(() => {
-        console.log('ROW UPDATE');
       })
       .catch(e => console.log(e));
   }
 
-  public updateDataOnl(note) {
+  public updateDataOnl(note: Sql) {
     note.latLng = JSON.stringify(note.latLng);
-    note.photos = JSON.stringify(note.photos);
-    const { id, title, text, photos, completed, latLng } = note;
+    const { id, title, text, completed, latLng } = note;
     // tslint:disable-next-line: max-line-length
-    this.database.executeSql('UPDATE ' + this.tableName + ' SET title = ' + "'" + title + "'" + ', text = ' + "'" + text + "'" + ', photos = ' + "'" + photos + "'" + ', completed = ' + "'" + completed + "'" + ', latLng = ' + "'" + latLng + "'" + ' WHERE id = ' + "'" + id + "'", [])
+    this.database.executeSql('UPDATE ' + this.tableName + ' SET title = ' + "'" + title + "'" + ', text = ' + "'" + text + "'" + ', completed = ' + "'" + completed + "'" + ', latLng = ' + "'" + latLng + "'" + ' WHERE id = ' + "'" + id + "'", [])
       .then(() => {
-        console.log('ROW UPDATE');
       })
       .catch(e => console.log(e));
   }

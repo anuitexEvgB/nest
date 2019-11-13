@@ -1,12 +1,9 @@
-import { Geo } from './geo.model';
-import { Photo } from './photo.model';
-
-export interface Note {
+export interface Sql {
     id?: number;
     title: string;
     text: string;
     completed: boolean;
-    latLng: Geo;
+    latLng: object | string;
     userId: string;
     LiteId?: number;
 }
