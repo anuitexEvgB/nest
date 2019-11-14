@@ -36,7 +36,6 @@ export class LoginPage implements OnInit {
 
   public login() {
     if (this.form.valid) {
-      console.log(this.form);
       this.authService.login(this.form.value).subscribe(res => {
         this.form.reset();
         if (res.status === 200) {

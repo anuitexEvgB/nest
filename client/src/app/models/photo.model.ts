@@ -4,7 +4,7 @@ export interface Photo {
     photo: string;
 }
 
-export interface PhotoRemove {
+export interface PhotoNote {
     id?: string;
     photo: string;
     namePhoto: string;

@@ -16,7 +16,7 @@ import {
 } from '@ionic-native/google-maps';
 
 // Models
-import { Note, PhotoRemove, Photo } from 'src/app/models';
+import { Note, PhotoNote, Photo } from 'src/app/models';
 
 // Service
 import { UploadImgNestService, NestMongoService, DatabaseService, NetworkService } from 'src/app/services';
@@ -32,8 +32,9 @@ import { environment } from 'src/environments/environment';
 export class UpserNotePage implements OnInit {
   public note: Note;
   public checked = false;
-  public photos: PhotoRemove[] = [];
-  public photostest: Photo[] = [];
+  public photos: PhotoNote[] = [];
+  public photosRes: Photo[] = [];
+
   private map: GoogleMap;
   private editMode: boolean = !!this.route.snapshot.queryParams.edit;
   private api = environment.api;
@@ -88,10 +89,10 @@ export class UpserNotePage implements OnInit {
     }
   }
 
-  public async close() {
+  public close() {
     this.router.navigate(['pages/home']);
-    const undef = this.photostest;
-    await undef.forEach((del) => {
+    const undef = this.photosRes;
+    undef.forEach((del) => {
       if (del.noteId === 'undefined') {
         this.uploadImgNestService.deletePhoto(del.id, del.photo).subscribe();
       }
@@ -123,7 +124,7 @@ export class UpserNotePage implements OnInit {
       });
   }
 
-  public deleteFile(photo: PhotoRemove) {
+  public deleteFile(photo: PhotoNote) {
     const index = this.photos.indexOf(photo);
     if (index > -1) {
       const del = this.photos.splice(index, 1);
@@ -173,7 +174,7 @@ export class UpserNotePage implements OnInit {
           photo: path,
           namePhoto: res.result.photo,
         });
-        this.photostest.push(res.result);
+        this.photosRes.push(res.result);
       });
     });
   }
@@ -196,11 +197,10 @@ export class UpserNotePage implements OnInit {
           photo: path,
           namePhoto: res.result.photo
         });
-        this.photostest.push(res.result);
+        this.photosRes.push(res.result);
       });
     });
   }
-
   public onSubmit() {
     const stat = this.networkService.getCurrentNetworkStatus();
     if (this.editMode) {
@@ -215,7 +215,7 @@ export class UpserNotePage implements OnInit {
         }
       }
     } else {
-      this.noteService.postNotes(this.note, this.photostest).subscribe(res => {
+      this.noteService.postNotes(this.note, this.photosRes).subscribe(res => {
         this.noteService.noteSubject.next(res);
         this.databaseService.insertRow(Object.assign({}, res));
       });

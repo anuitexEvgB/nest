@@ -25,14 +25,12 @@ export class NetworkService {
   public initializeNetworkEvents() {
     this.network.onDisconnect().subscribe(() => {
       if (this.status.getValue() === ConnectionStatus.Online) {
-        console.log('WE ARE OFFLINE');
         this.updateNetworkStatus(ConnectionStatus.Offline);
       }
     });
 
     this.network.onConnect().subscribe(() => {
       if (this.status.getValue() === ConnectionStatus.Offline) {
-        console.log('WE ARE ONLINE');
         this.updateNetworkStatus(ConnectionStatus.Online);
       }
     });

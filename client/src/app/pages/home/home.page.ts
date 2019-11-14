@@ -57,7 +57,6 @@ export class HomePage implements OnInit {
   public doRefresh(event: { target: { complete: () => void; }; }) {
     this.getAll();
     this.refreshSQL();
-    console.log(this.notes);
     event.target.complete();
   }
 
@@ -113,28 +112,4 @@ export class HomePage implements OnInit {
         this.notes = response;
       });
   }
-
-  // getRows() {
-  //   this.databaseService.getRows();
-  // }
-
-  // dropDB() {
-  //   this.databaseService.dropDB();
-  // }
-
-  // dropDBDel() {
-  //   this.databaseService.dropDBDel();
-  // }
-
-  // dropDBUpdate() {
-  //   this.databaseService.dropDBUpdate();
-  // }
-
-  // getRowsForDelete() {
-  //   this.databaseService.getRowsForDelete();
-  // }
-
-  // getRowsForUpdate() {
-  //   this.databaseService.getRowsForUpdate();
-  // }
 }

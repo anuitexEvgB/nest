@@ -109,7 +109,6 @@ export class DatabaseService {
             this.rowDataDelete.push(res.rows.item(i));
           }
         }
-        console.log(this.rowDataDelete);
         return this.rowDataDelete;
       })
       .catch(e => {
@@ -133,7 +132,6 @@ export class DatabaseService {
             this.rowData.push(res.rows.item(i));
           }
         }
-        console.log(this.rowData);
         return this.rowData;
       })
       .catch(e => {
@@ -157,7 +155,6 @@ export class DatabaseService {
             this.rowDataUpdate.push(res.rows.item(i));
           }
         }
-        console.log(this.rowDataUpdate);
         return this.rowDataUpdate;
       })
       .catch(e => {

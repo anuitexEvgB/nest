@@ -48,7 +48,6 @@ export class AuthService {
   public async logout() {
     await this.storage.remove('ACCESS_TOKEN');
     await this.storage.remove('USER_ID');
-    this.storage.get('USER_ID').then(a => console.log(a));
   }
 
   public async getToken() {
