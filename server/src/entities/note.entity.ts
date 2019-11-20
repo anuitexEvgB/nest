@@ -13,22 +13,19 @@ export class Note {
 
     @Column()
     completed: boolean;
-<<<<<<< Updated upstream
-=======
 
-    @ApiModelProperty()
+    @Column()
     latLng: {
         lat: number,
         lng: number,
     };
 
-    @ApiModelProperty()
+    @Column()
     userId: string;
 
-    @ApiModelProperty()
+    @Column()
     LiteId: number;
 
-    @ApiModelProperty()
+    @Column()
     PhotoId: [];
->>>>>>> Stashed changes
 }
