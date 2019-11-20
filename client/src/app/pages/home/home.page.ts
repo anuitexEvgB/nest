@@ -138,7 +138,7 @@ export class HomePage implements OnInit {
   }
 
   test4() {
-    this.tts.speak('Fuck you')
+    this.tts.speak('Fuck you Gleb, Powel naxui')
     .then(() => console.log('wokred'))
     .catch(e => console.log(e));
   }
